@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg height="700" viewBox="0 0 800 700" width="800" xmlns="http://www.w3.org/2000/svg">
+ <style>
+  .estado {
+      fill: #cce5ff;
+      stroke: #333;
+      stroke-width: 1;
+      cursor: pointer;
+    }
+    .estado:hover {
+      fill: #66b3ff;
+    }
+ </style>
+ <g id="estados">
+  <path class="estado" d="M400,600 L420,580 L430,590 L420,610 Z" id="SP"/>
+  <path class="estado" d="M420,520 L440,500 L460,510 L450,530 Z" id="MG"/>
+  <path class="estado" d="M460,470 L480,450 L500,460 L490,480 Z" id="BA"/>
+  <path class="estado" d="M450,560 L470,550 L480,570 L460,580 Z" id="RJ"/>
+  <path class="estado" d="M350,650 L370,630 L390,640 L370,660 Z" id="RS"/>
+ </g>
+</svg>
