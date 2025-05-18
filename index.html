@@ -81,21 +81,8 @@
   <p style="text-align:center">Clique em um estado para ver os cards das pesquisas.</p>
 
   <div class="container">
-    <svg viewBox="0 0 960 660" xmlns="http://www.w3.org/2000/svg">
-      <path id="al" d="M720,400 L750,400 L750,430 L720,430 Z" />
-      <path id="ba" d="M690,370 L750,370 L750,400 L690,400 Z" />
-      <path id="mt" d="M500,300 L550,300 L550,350 L500,350 Z" />
-      <path id="go" d="M550,370 L600,370 L600,420 L550,420 Z" />
-      <path id="mg" d="M650,400 L700,400 L700,450 L650,450 Z" />
-      <path id="pe" d="M740,360 L770,360 L770,380 L740,380 Z" />
-      <path id="rn" d="M770,330 L800,330 L800,350 L770,350 Z" />
-      <path id="sp" d="M640,460 L700,460 L700,500 L640,500 Z" />
-      <path id="rj" d="M700,500 L730,500 L730,520 L700,520 Z" />
-      <path id="es" d="M720,470 L740,470 L740,490 L720,490 Z" />
-      <path id="pr" d="M600,500 L640,500 L640,530 L600,530 Z" />
-      <path id="sc" d="M580,530 L620,530 L620,560 L580,560 Z" />
-      <path id="rs" d="M560,560 L600,560 L600,600 L560,600 Z" />
-    </svg>
+    <!-- Inserindo o SVG real -->
+    <object type="image/svg+xml" data="mapa_brasil_simples.svg" id="mapa-brasil" style="width:600px; max-width:90vw;"></object>
 
     <div id="painel-info">
       <h2 id="titulo-estado"></h2>
@@ -151,8 +138,17 @@
       }
     }
 
-    document.querySelectorAll("svg path").forEach(path => {
-      path.addEventListener("click", () => mostrarPainel(path.id));
+    // Como o SVG é carregado via <object>, precisamos esperar ele carregar e então adicionar os eventos:
+    document.getElementById("mapa-brasil").addEventListener("load", function() {
+      const svgDoc = this.contentDocument;
+      if (!svgDoc) return;
+      Object.keys(dados).forEach(id => {
+        const el = svgDoc.getElementById(id);
+        if (el) {
+          el.style.cursor = "pointer";
+          el.addEventListener("click", () => mostrarPainel(id));
+        }
+      });
     });
   </script>
 </body>
