@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa Interativo do Brasil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    svg {
+      flex-shrink: 0;
+      width: 600px;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+    }
+    path {
+      fill: #ddd;
+      stroke: #888;
+      stroke-width: 1;
+      cursor: pointer;
+      transition: fill 0.2s;
+    }
+    path:hover {
+      fill: #ffa500;
+    }
+    #painel-info {
+      max-width: 400px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+    #painel-info img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .botoes {
+      margin-top: 10px;
+      text-align: center;
+    }
+    .botoes button {
+      margin: 5px;
+      padding: 6px 12px;
+      border: none;
+      background: #eee;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .botoes button:hover {
+      background: #ddd;
+    }
+    @media (max-width: 800px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+      svg {
+        width: 90vw;
+      }
+      #painel-info {
+        width: 90vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center">Mapa Interativo do Brasil</h1>
+  <p style="text-align:center">Clique em um estado para ver os cards das pesquisas.</p>
+
+  <div class="container">
+    <svg viewBox="0 0 960 660" xmlns="http://www.w3.org/2000/svg">
+      <path id="al" d="M720,400 L750,400 L750,430 L720,430 Z" />
+      <path id="ba" d="M690,370 L750,370 L750,400 L690,400 Z" />
+      <path id="mt" d="M500,300 L550,300 L550,350 L500,350 Z" />
+      <path id="go" d="M550,370 L600,370 L600,420 L550,420 Z" />
+      <path id="mg" d="M650,400 L700,400 L700,450 L650,450 Z" />
+      <path id="pe" d="M740,360 L770,360 L770,380 L740,380 Z" />
+      <path id="rn" d="M770,330 L800,330 L800,350 L770,350 Z" />
+      <path id="sp" d="M640,460 L700,460 L700,500 L640,500 Z" />
+      <path id="rj" d="M700,500 L730,500 L730,520 L700,520 Z" />
+      <path id="es" d="M720,470 L740,470 L740,490 L720,490 Z" />
+      <path id="pr" d="M600,500 L640,500 L640,530 L600,530 Z" />
+      <path id="sc" d="M580,530 L620,530 L620,560 L580,560 Z" />
+      <path id="rs" d="M560,560 L600,560 L600,600 L560,600 Z" />
+    </svg>
+
+    <div id="painel-info">
+      <h2 id="titulo-estado"></h2>
+      <div id="conteudo-estado"></div>
+      <div class="botoes" id="navegacao"></div>
+    </div>
+  </div>
+
+  <script>
+    const baseURL = "https://victoriabarel.github.io/mapa-interativo-quantica/cards/";
+
+    const dados = {
+      al: { titulo: "Alagoas", imagens: ["al1.png"] },
+      ba: { titulo: "Bahia", imagens: ["ba1.png"] },
+      mt: { titulo: "Mato Grosso", imagens: ["mt1.png"] },
+      go: { titulo: "Goiás", imagens: ["go1.png"] },
+      mg: { titulo: "Minas Gerais", imagens: ["mg1.png", "mg2.png", "mg3.png", "mg4.png", "mg5.png"] },
+      pe: { titulo: "Pernambuco", imagens: ["pe1.png", "pe2.png"] },
+      rn: { titulo: "Rio Grande do Norte", imagens: ["rn1.png"] },
+      sp: { titulo: "São Paulo", imagens: ["sp1.png", "sp2.png", "sp3.png", "sp4.png", "sp5.png", "sp6.png", "sp7.png", "sp8.png", "sp9.png", "sp10.png", "sp11.png", "sp12.png", "sp13.png"] },
+      rj: { titulo: "Rio de Janeiro", imagens: ["rj1.png", "rj2.png", "rj3.png", "rj4.png", "rj5.png", "rj6.png", "rj7.png", "rj8.png"] },
+      es: { titulo: "Espírito Santo", imagens: ["es1.png"] },
+      pr: { titulo: "Paraná", imagens: ["pr1.png", "pr2.png", "pr3.png"] },
+      sc: { titulo: "Santa Catarina", imagens: ["sc1.png"] },
+      rs: { titulo: "Rio Grande do Sul", imagens: ["rs1.png"] },
+    };
+
+    let estadoAtual = null;
+    let paginaAtual = 0;
+
+    function mostrarPainel(id, pagina = 0) {
+      const estado = dados[id];
+      if (!estado) return;
+
+      estadoAtual = id;
+      paginaAtual = pagina;
+
+      document.getElementById("titulo-estado").textContent = estado.titulo;
+      document.getElementById("conteudo-estado").innerHTML = `
+        <img src="${baseURL + estado.imagens[pagina]}" alt="${estado.titulo} - Card ${pagina + 1}">
+      `;
+      document.getElementById("painel-info").style.display = "block";
+
+      const nav = document.getElementById("navegacao");
+      nav.innerHTML = "";
+      if (estado.imagens.length > 1) {
+        estado.imagens.forEach((_, i) => {
+          const btn = document.createElement("button");
+          btn.textContent = `Página ${i + 1}`;
+          btn.onclick = () => mostrarPainel(id, i);
+          nav.appendChild(btn);
+        });
+      }
+    }
+
+    document.querySelectorAll("svg path").forEach(path => {
+      path.addEventListener("click", () => mostrarPainel(path.id));
+    });
+  </script>
+</body>
+</html>
