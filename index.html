@@ -16,10 +16,11 @@
       justify-content: center;
       gap: 20px;
     }
-    svg, object {
-      flex-shrink: 0;
-      width: 600px;
+    svg {
+      width: 100%;
       height: auto;
+      max-width: 800px;
+      display: block;
       border: 1px solid #ccc;
       border-radius: 8px;
       background: #fff;
@@ -58,7 +59,6 @@
       background: #eee;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 16px;
     }
     .botoes button:hover {
       background: #ddd;
@@ -67,9 +67,6 @@
       .container {
         flex-direction: column;
         align-items: center;
-      }
-      svg {
-        width: 90vw;
       }
       #painel-info {
         width: 90vw;
@@ -82,13 +79,22 @@
   <p style="text-align:center">Clique em um estado para ver os cards das pesquisas.</p>
 
   <div class="container">
-    <!-- SVG atualizado -->
-    <object type="image/svg+xml" data="mapa_brasil_corrigido.svg" id="mapa-brasil" style="width:600px; max-width:90vw;"></object>
+    <!-- Inserindo o SVG inline (exemplo com apenas alguns estados) -->
+    <svg viewBox="0 0 800 700" xmlns="http://www.w3.org/2000/svg">
+      <path class="estado" d="M400,600 L420,580 L430,590 L420,610 Z" id="SP"/>
+      <path class="estado" d="M420,520 L440,500 L460,510 L450,530 Z" id="MG"/>
+      <path class="estado" d="M460,470 L480,450 L500,460 L490,480 Z" id="BA"/>
+      <path class="estado" d="M450,560 L470,550 L480,570 L460,580 Z" id="RJ"/>
+      <path class="estado" d="M350,650 L370,630 L390,640 L370,660 Z" id="RS"/>
+    </svg>
 
     <div id="painel-info">
       <h2 id="titulo-estado"></h2>
       <div id="conteudo-estado"></div>
-      <div class="botoes" id="navegacao"></div>
+      <div class="botoes">
+        <button id="anterior">◀</button>
+        <button id="proximo">▶</button>
+      </div>
     </div>
   </div>
 
@@ -126,35 +132,25 @@
         <img src="${baseURL + estado.imagens[pagina]}" alt="${estado.titulo} - Card ${pagina + 1}">
       `;
       document.getElementById("painel-info").style.display = "block";
-
-      const nav = document.getElementById("navegacao");
-      nav.innerHTML = "";
-
-      if (estado.imagens.length > 1) {
-        const btnAnterior = document.createElement("button");
-        btnAnterior.textContent = "⬅️";
-        btnAnterior.disabled = paginaAtual === 0;
-        btnAnterior.onclick = () => mostrarPainel(id, paginaAtual - 1);
-        nav.appendChild(btnAnterior);
-
-        const texto = document.createElement("span");
-        texto.textContent = ` ${paginaAtual + 1} de ${estado.imagens.length} `;
-        nav.appendChild(texto);
-
-        const btnProximo = document.createElement("button");
-        btnProximo.textContent = "➡️";
-        btnProximo.disabled = paginaAtual >= estado.imagens.length - 1;
-        btnProximo.onclick = () => mostrarPainel(id, paginaAtual + 1);
-        nav.appendChild(btnProximo);
-      }
     }
 
-    document.getElementById("mapa-brasil").addEventListener("load", function() {
-      const svgDoc = this.contentDocument;
-      if (!svgDoc) return;
+    document.getElementById("anterior").addEventListener("click", () => {
+      const estado = dados[estadoAtual];
+      if (!estado || estado.imagens.length <= 1) return;
+      paginaAtual = (paginaAtual - 1 + estado.imagens.length) % estado.imagens.length;
+      mostrarPainel(estadoAtual, paginaAtual);
+    });
 
+    document.getElementById("proximo").addEventListener("click", () => {
+      const estado = dados[estadoAtual];
+      if (!estado || estado.imagens.length <= 1) return;
+      paginaAtual = (paginaAtual + 1) % estado.imagens.length;
+      mostrarPainel(estadoAtual, paginaAtual);
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
       Object.keys(dados).forEach(id => {
-        const el = svgDoc.getElementById(id.toUpperCase());
+        const el = document.getElementById(id.toUpperCase());
         if (el) {
           el.style.cursor = "pointer";
           el.addEventListener("click", () => mostrarPainel(id));
