@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa Interativo por Cidades</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .mapa {
+      max-width: 700px;
+      width: 100%;
+    }
+    .cidade {
+      cursor: default;
+      font-weight: bold;
+      fill: #333;
+    }
+    .botoes {
+      display: flex;
+      gap: 5px;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+    .botoes button {
+      background: #ddd;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      cursor: pointer;
+    }
+    .botoes button:hover {
+      background: #bbb;
+    }
+    #painel {
+      position: fixed;
+      right: 30px;
+      top: 100px;
+      width: 320px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: none;
+      padding: 20px;
+      z-index: 10;
+    }
+    #painel img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    @media (max-width: 800px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+      #painel {
+        position: static;
+        width: 90vw;
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center">Mapa Interativo por Cidades</h2>
+  <p style="text-align:center">Clique nos números abaixo das cidades para visualizar os cards.</p>
+
+  <div class="container">
+    <div class="mapa">
+      <!-- Substitua o trecho abaixo pelo seu SVG inline -->
+      <!-- Exemplo fictício com elementos de texto -->
+      <svg viewBox="0 0 1000 1200" xmlns="http://www.w3.org/2000/svg">
+        <text x="100" y="100" class="cidade">São Paulo</text>
+        <foreignObject x="100" y="110" width="200" height="30">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="botoes" data-cidade="saopaulo">
+            <button data-num="1">1</button>
+            <button data-num="2">2</button>
+          </div>
+        </foreignObject>
+
+        <text x="100" y="180" class="cidade">Campinas</text>
+        <foreignObject x="100" y="190" width="200" height="30">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="botoes" data-cidade="campinas">
+            <button data-num="1">1</button>
+            <button data-num="2">2</button>
+            <button data-num="3">3</button>
+          </div>
+        </foreignObject>
+
+        <!-- Repita para outras cidades -->
+      </svg>
+    </div>
+
+    <div id="painel">
+      <img id="imagem-card" src="" alt="Imagem do Card" />
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.botoes button').forEach(button => {
+      button.addEventListener('click', () => {
+        const cidade = button.parentElement.getAttribute('data-cidade');
+        const numero = button.getAttribute('data-num');
+        const caminho = `https://victoriabarel.github.io/mapa-interativo-quantica/cards/${cidade}${numero}.png`;
+
+        const painel = document.getElementById('painel');
+        const img = document.getElementById('imagem-card');
+        img.src = caminho;
+        painel.style.display = 'block';
+      });
+    });
+  </script>
+</body>
+</html>
 
