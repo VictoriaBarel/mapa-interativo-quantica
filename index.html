@@ -2,126 +2,166 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Mapa Interativo por Cidades</title>
+  <title>Mapa Interativo das Cidades</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f4f4f4;
       margin: 0;
       padding: 20px;
-      background: #f2f2f2;
     }
+
+    h1, p {
+      text-align: center;
+    }
+
     .container {
       display: flex;
-      flex-direction: row;
-      gap: 20px;
       justify-content: center;
       align-items: flex-start;
+      gap: 30px;
       flex-wrap: wrap;
     }
-    .mapa {
-      max-width: 700px;
+
+    svg {
       width: 100%;
+      max-width: 800px;
+      height: auto;
+      border: 1px solid #ccc;
+      background: #fff;
+      border-radius: 8px;
     }
-    .cidade {
-      cursor: default;
-      font-weight: bold;
-      fill: #333;
-    }
-    .botoes {
-      display: flex;
-      gap: 5px;
-      margin-top: 4px;
-      font-size: 14px;
-    }
-    .botoes button {
-      background: #ddd;
-      border: none;
-      border-radius: 4px;
-      padding: 2px 6px;
-      cursor: pointer;
-    }
-    .botoes button:hover {
-      background: #bbb;
-    }
-    #painel {
-      position: fixed;
-      right: 30px;
-      top: 100px;
+
+    #painel-info {
+      position: sticky;
+      top: 20px;
       width: 320px;
       background: white;
       border: 1px solid #ccc;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      display: none;
       padding: 20px;
-      z-index: 10;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
     }
-    #painel img {
+
+    #painel-info img {
       width: 100%;
       border-radius: 8px;
+      margin-bottom: 10px;
     }
+
+    .botoes {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .botoes button {
+      margin: 5px;
+      padding: 6px 12px;
+      border: none;
+      background: #eee;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .botoes button:hover {
+      background: #ddd;
+    }
+
     @media (max-width: 800px) {
       .container {
         flex-direction: column;
         align-items: center;
       }
-      #painel {
-        position: static;
+
+      #painel-info {
         width: 90vw;
-        margin-top: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <h2 style="text-align:center">Mapa Interativo por Cidades</h2>
-  <p style="text-align:center">Clique nos números abaixo das cidades para visualizar os cards.</p>
+  <h1>Mapa Interativo das Cidades</h1>
+  <p>Clique em uma cidade para ver os cards disponíveis.</p>
 
   <div class="container">
-    <div class="mapa">
-      <!-- Substitua o trecho abaixo pelo seu SVG inline -->
-      <!-- Exemplo fictício com elementos de texto -->
-      <svg viewBox="0 0 1000 1200" xmlns="http://www.w3.org/2000/svg">
-        <text x="100" y="100" class="cidade">São Paulo</text>
-        <foreignObject x="100" y="110" width="200" height="30">
-          <div xmlns="http://www.w3.org/1999/xhtml" class="botoes" data-cidade="saopaulo">
-            <button data-num="1">1</button>
-            <button data-num="2">2</button>
-          </div>
-        </foreignObject>
+    <!-- Inserindo o SVG do GitHub como embed -->
+    <object type="image/svg+xml" data="https://victoriabarel.github.io/mapa-interativo-quantica/mapa-rafael-editado.svg" id="mapa" style="width: 100%; max-width: 800px;"></object>
 
-        <text x="100" y="180" class="cidade">Campinas</text>
-        <foreignObject x="100" y="190" width="200" height="30">
-          <div xmlns="http://www.w3.org/1999/xhtml" class="botoes" data-cidade="campinas">
-            <button data-num="1">1</button>
-            <button data-num="2">2</button>
-            <button data-num="3">3</button>
-          </div>
-        </foreignObject>
-
-        <!-- Repita para outras cidades -->
-      </svg>
-    </div>
-
-    <div id="painel">
-      <img id="imagem-card" src="" alt="Imagem do Card" />
+    <div id="painel-info">
+      <div id="cards"></div>
+      <div class="botoes">
+        <button onclick="mudarCard(-1)">&lt;</button>
+        <button onclick="mudarCard(1)">&gt;</button>
+      </div>
     </div>
   </div>
 
   <script>
-    document.querySelectorAll('.botoes button').forEach(button => {
-      button.addEventListener('click', () => {
-        const cidade = button.parentElement.getAttribute('data-cidade');
-        const numero = button.getAttribute('data-num');
-        const caminho = `https://victoriabarel.github.io/mapa-interativo-quantica/cards/${cidade}${numero}.png`;
+    const cidadesComCards = {
+      recife: 1,
+      arapiraca: 1,
+      maceio: 2,
+      salvador: 1,
+      natal: 1,
+      cuiaba: 1,
+      goiania: 1,
+      belohorizonte: 1,
+      saopaulo: 2,
+      campinas: 3,
+      saocarlos: 2,
+      riojaneiro: 4,
+      niteroi: 1,
+      vitoria: 1,
+      curitiba: 1,
+      pontagrossa: 1,
+      cornelioprocopio: 1,
+      florianopolis: 1,
+      santamaria: 1
+    };
 
-        const painel = document.getElementById('painel');
-        const img = document.getElementById('imagem-card');
-        img.src = caminho;
-        painel.style.display = 'block';
-      });
+    let cidadeAtual = null;
+    let cardAtual = 1;
+
+    const painel = document.getElementById("painel-info");
+    const cardsDiv = document.getElementById("cards");
+
+    document.getElementById("mapa").addEventListener("load", function () {
+      const svgDoc = this.contentDocument;
+      for (const cidade in cidadesComCards) {
+        const el = svgDoc.getElementById(cidade);
+        if (el) {
+          el.style.cursor = "pointer";
+          el.addEventListener("click", () => mostrarCards(cidade));
+        }
+      }
     });
+
+    function mostrarCards(cidade) {
+      cidadeAtual = cidade;
+      cardAtual = 1;
+      atualizarCard();
+      painel.style.display = "block";
+    }
+
+    function atualizarCard() {
+      const total = cidadesComCards[cidadeAtual];
+      if (!total) {
+        cardsDiv.innerHTML = "<p>Sem imagens ainda para esta cidade.</p>";
+        return;
+      }
+      const imgURL = `https://victoriabarel.github.io/mapa-interativo-quantica/cards/${cidadeAtual}${cardAtual}.jpg`;
+      cardsDiv.innerHTML = `<img src="${imgURL}" alt="Card ${cardAtual}">`;
+    }
+
+    function mudarCard(delta) {
+      const total = cidadesComCards[cidadeAtual];
+      if (!total) return;
+      cardAtual += delta;
+      if (cardAtual < 1) cardAtual = total;
+      if (cardAtual > total) cardAtual = 1;
+      atualizarCard();
+    }
   </script>
 </body>
 </html>
-
