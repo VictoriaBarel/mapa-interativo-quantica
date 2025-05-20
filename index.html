@@ -68,6 +68,11 @@
       background: #ddd;
     }
 
+    .numero-cards {
+      font-weight: bold;
+      fill: #444;
+    }
+
     @media (max-width: 800px) {
       .container {
         flex-direction: column;
@@ -133,6 +138,21 @@
         if (el) {
           el.style.cursor = "pointer";
           el.addEventListener("click", () => mostrarCards(cidade));
+
+          // Adiciona número de cards abaixo da cidade
+          const bbox = el.getBBox();
+          const numero = cidadesComCards[cidade];
+
+          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          text.textContent = numero;
+          text.setAttribute("x", bbox.x + bbox.width / 2);
+          text.setAttribute("y", bbox.y + bbox.height + 12);
+          text.setAttribute("text-anchor", "middle");
+          text.setAttribute("font-size", "10");
+          text.setAttribute("fill", "black");
+          text.setAttribute("class", "numero-cards");
+
+          el.parentNode.appendChild(text);
         }
       }
     });
