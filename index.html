@@ -10,21 +10,31 @@
       margin: 0;
       padding: 20px;
     }
+
     .container {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: flex-start;
-      gap: 40px;
-      max-width: 1400px;
+      flex-wrap: wrap;
+      gap: 20px;
+      max-width: 1200px;
       margin: 0 auto;
     }
-    .mapa {
+
+    svg {
+      width: 100%;
       max-width: 800px;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
     }
+
     #painel-info {
-      position: sticky;
+      position: fixed;
       top: 100px;
+      right: 40px;
       width: 320px;
       background: white;
       border: 1px solid #ccc;
@@ -32,15 +42,19 @@
       padding: 20px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       display: none;
+      z-index: 10;
     }
+
     #painel-info img {
       width: 100%;
       border-radius: 8px;
     }
+
     .botoes {
       margin-top: 10px;
       text-align: center;
     }
+
     .botoes button {
       margin: 5px;
       padding: 6px 12px;
@@ -49,101 +63,112 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     .botoes button:hover {
       background: #ddd;
     }
+
     @media (max-width: 800px) {
       .container {
         flex-direction: column;
         align-items: center;
       }
       #painel-info {
+        position: static;
         width: 90vw;
-      }
-      .mapa {
-        width: 100%;
+        margin-top: 20px;
       }
     }
   </style>
 </head>
 <body>
   <h1 style="text-align:center">Mapa Interativo das Tecnologias Quânticas no Brasil</h1>
-  <p style="text-align:center">Clique na cidade para visualizar os cards relacionados às pesquisas.</p>
+  <p style="text-align:center">Clique em uma cidade para ver os cards das pesquisas.</p>
 
   <div class="container">
-    <div class="mapa">
-      <!-- Inserir aqui o conteúdo do SVG copiado -->
-      <!-- Copie o código do SVG completo aqui -->
-    </div>
+    <!-- SVG embutido -->
+    <!-- Cole aqui o conteúdo do arquivo mapa-rafael-final.svg -->
+    <!-- Para facilitar, você pode usar a tag <object> se preferir carregar o SVG externamente -->
+    <object type="image/svg+xml" data="mapa-rafael-final.svg" width="800"></object>
 
+    <!-- Painel para exibir cards -->
     <div id="painel-info">
-      <div id="conteudo-card"></div>
+      <div id="card-container"></div>
       <div class="botoes">
-        <button onclick="voltarCard()">Anterior</button>
-        <button onclick="avancarCard()">Próximo</button>
+        <button onclick="anterior()">Anterior</button>
+        <button onclick="proximo()">Próximo</button>
       </div>
     </div>
   </div>
 
   <script>
     const cards = {
-      'saopaulo': ['cards/saopaulo1.jpg', 'cards/saopaulo2.jpg'],
-      'campinas': ['cards/campinas1.jpg', 'cards/campinas2.jpg', 'cards/campinas3.jpg'],
-      'riodejaneiro': ['cards/riodejaneiro1.jpg', 'cards/riodejaneiro2.jpg', 'cards/riodejaneiro3.jpg', 'cards/riodejaneiro4.jpg'],
-      'niteroi': ['cards/niteroi1.jpg'],
-      'santamaria': ['cards/santamaria1.jpg'],
-      'salvador': ['cards/salvador1.jpg'],
-      'maceio': ['cards/maceio1.jpg', 'cards/maceio2.jpg'],
-      'arapiraca': ['cards/arapiraca1.jpg'],
-      'recife': ['cards/recife1.jpg'],
-      'natal': ['cards/natal1.jpg'],
-      'cuiaba': ['cards/cuiaba1.jpg'],
-      'goiania': ['cards/goiania1.jpg'],
-      'belohorizonte': ['cards/belohorizonte1.jpg'],
-      'saocarlos': ['cards/saocarlos1.jpg', 'cards/saocarlos2.jpg'],
-      'ponta-grossa': ['cards/ponta-grossa1.jpg'],
-      'curitiba': ['cards/curitiba1.jpg'],
-      'florianopolis': ['cards/florianopolis1.jpg'],
-      'cornelioprocopio': ['cards/cornelioprocopio1.jpg'],
-      'vitoria': ['cards/vitoria1.jpg']
+      recife: ["recife1.jpg"],
+      arapiraca: ["arapiraca1.jpg"],
+      maceio: ["maceio1.jpg", "maceio2.jpg"],
+      salvador: ["salvador1.jpg"],
+      natal: ["natal1.jpg"],
+      cuiaba: ["cuiaba1.jpg"],
+      goiania: ["goiania1.jpg"],
+      bh: ["bh1.jpg"],
+      sp: ["sp1.jpg", "sp2.jpg"],
+      campinas: ["campinas1.jpg", "campinas2.jpg", "campinas3.jpg"],
+      saocarlos: ["saocarlos1.jpg", "saocarlos2.jpg"],
+      rj: ["rj1.jpg", "rj2.jpg", "rj3.jpg", "rj4.jpg"],
+      niteroi: ["niteroi1.jpg"],
+      vitoria: ["vitoria1.jpg"],
+      curitiba: ["curitiba1.jpg"],
+      pontagrossa: ["pontagrossa1.jpg"],
+      cornelio: ["cornelio1.jpg"],
+      floripa: ["floripa1.jpg"],
+      santamaria: ["santamaria1.jpg"]
     };
 
-    let cidadeAtual = '';
-    let indexCard = 0;
+    let atual = 0;
+    let imagens = [];
 
-    function mostrarCards(cidadeId) {
-      if (!cards[cidadeId]) return;
-      cidadeAtual = cidadeId;
-      indexCard = 0;
+    function mostrarCidade(cidade) {
+      if (!cards[cidade]) return;
+      imagens = cards[cidade];
+      atual = 0;
+      atualizarCard();
       document.getElementById('painel-info').style.display = 'block';
-      mostrarCardAtual();
     }
 
-    function mostrarCardAtual() {
-      const cardUrl = cards[cidadeAtual][indexCard];
-      document.getElementById('conteudo-card').innerHTML = `<img src="https://victoriabarel.github.io/mapa-interativo-quantica/${cardUrl}" alt="Card">`;
+    function atualizarCard() {
+      const container = document.getElementById('card-container');
+      container.innerHTML = `<img src="https://victoriabarel.github.io/mapa-interativo-quantica/cards/${imagens[atual]}" alt="Card">`;
     }
 
-    function avancarCard() {
-      if (indexCard < cards[cidadeAtual].length - 1) {
-        indexCard++;
-        mostrarCardAtual();
+    function proximo() {
+      if (atual < imagens.length - 1) {
+        atual++;
+        atualizarCard();
       }
     }
 
-    function voltarCard() {
-      if (indexCard > 0) {
-        indexCard--;
-        mostrarCardAtual();
+    function anterior() {
+      if (atual > 0) {
+        atual--;
+        atualizarCard();
       }
     }
 
-    // Ativar os cliques
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('[data-cidade]').forEach(el => {
-        el.addEventListener('click', () => {
-          const cidade = el.getAttribute('data-cidade');
-          mostrarCards(cidade);
+    // Eventos para os quadradinhos
+    document.addEventListener("DOMContentLoaded", () => {
+      const svgDoc = document.querySelector("object").contentDocument;
+      const cidades = Object.keys(cards);
+
+      document.querySelector("object").addEventListener("load", () => {
+        const svgInner = document.querySelector("object").contentDocument;
+        cidades.forEach(cidade => {
+          for (let i = 1; i <= cards[cidade].length; i++) {
+            const botao = svgInner.getElementById(`${cidade}${i}`);
+            if (botao) {
+              botao.style.cursor = "pointer";
+              botao.addEventListener("click", () => mostrarCidade(cidade));
+            }
+          }
         });
       });
     });
