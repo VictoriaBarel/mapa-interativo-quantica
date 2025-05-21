@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1200" viewBox="0 0 1000 1200">
+  <style>
+    .cidade-label {
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+    }
+    .card-box {
+      fill: #ddd;
+      stroke: #333;
+      stroke-width: 1;
+      cursor: pointer;
+    }
+    .card-box:hover {
+      fill: #ffa500;
+    }
+  </style>
+
+  <!-- Exemplo: São Paulo com 2 cards -->
+  <text x="100" y="100" class="cidade-label">São Paulo</text>
+  <rect id="sp1" class="card-box" x="100" y="110" width="20" height="20" />
+  <rect id="sp2" class="card-box" x="125" y="110" width="20" height="20" />
+
+  <!-- Exemplo: Campinas com 3 cards -->
+  <text x="100" y="160" class="cidade-label">Campinas</text>
+  <rect id="campinas1" class="card-box" x="100" y="170" width="20" height="20" />
+  <rect id="campinas2" class="card-box" x="125" y="170" width="20" height="20" />
+  <rect id="campinas3" class="card-box" x="150" y="170" width="20" height="20" />
+
+  <!-- Exemplo: Rio de Janeiro com 4 cards -->
+  <text x="100" y="220" class="cidade-label">Rio de Janeiro</text>
+  <rect id="rj1" class="card-box" x="100" y="230" width="20" height="20" />
+  <rect id="rj2" class="card-box" x="125" y="230" width="20" height="20" />
+  <rect id="rj3" class="card-box" x="150" y="230" width="20" height="20" />
+  <rect id="rj4" class="card-box" x="175" y="230" width="20" height="20" />
+
+  <!-- Exemplo: Recife com 1 card -->
+  <text x="100" y="280" class="cidade-label">Recife</text>
+  <rect id="recife1" class="card-box" x="100" y="290" width="20" height="20" />
+
+  <!-- Exemplo: Salvador com 1 card -->
+  <text x="100" y="340" class="cidade-label">Salvador</text>
+  <rect id="salvador1" class="card-box" x="100" y="350" width="20" height="20" />
+
+</svg>
