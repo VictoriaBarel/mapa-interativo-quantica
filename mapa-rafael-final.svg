@@ -645,7 +645,10 @@
 <div id="painel-lateral">
   <img id="imagem-card" src="" alt="Card" />
 </div>
-
+<!-- Painel lateral -->
+<div id="painel-lateral">
+  <img id="imagem-card" src="" alt="Card" />
+</div>
 <!-- Estilo -->
 <style>
   #painel-lateral {
@@ -683,3 +686,4 @@
     });
   });
 </script>
+
