@@ -1,76 +1,76 @@
 <!DOCTYPE html>
-<html lang="pt-Br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mapa Interativo Quântica</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
       font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
+      background: #f9f9f9;
+    }
+
+    h1, p {
+      text-align: center;
     }
 
     .container {
       display: flex;
-      flex-direction: row;
-      width: 100%;
-      max-width: 1500px;
-      margin: 0 auto;
-    }
-
-    .svg-container {
-      flex: 2;
-      padding: 10px;
-    }
-
-    .card-panel {
-      flex: 1;
-      padding: 10px;
-      border-left: 2px solid #ccc;
-      background-color: #fff;
-      min-height: 100vh;
-      overflow-y: auto;
-    }
-
-    .card-panel img {
-      width: 100%;
-      height: auto;
-      margin-bottom: 15px;
-      display: none;
-    }
-
-    .card-panel img.active {
-      display: block;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      padding: 20px;
     }
 
     svg {
       width: 100%;
+      max-width: 1100px;
       height: auto;
+      display: block;
+      margin: 0 auto;
     }
 
-    @media screen and (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
+    #painel-lateral {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 320px;
+      height: 100vh;
+      background-color: #fff;
+      padding: 10px;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
 
-      .card-panel {
-        border-left: none;
-        border-top: 2px solid #ccc;
-        min-height: auto;
+    #painel-lateral img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 800px) {
+      #painel-lateral {
+        position: static;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        display: flex;
+        margin-top: 20px;
       }
     }
   </style>
 </head>
 <body>
+  <h1>Mapa Interativo das Tecnologias Quânticas no Brasil</h1>
+  <p>Clique em uma cidade para ver os cards das pesquisas.</p>
+
   <div class="container">
-    <div class="svg-container">
-<svg xmlns="http://www.w3.org/2000/svg" width="3510.08" height="937.3" viewBox="0 0 3510.08 937.3">
+    <!-- SVG embutido -->
+    <!-- Começo do SVG -->
+   <svg xmlns="http://www.w3.org/2000/svg" width="3510.08" height="937.3" viewBox="0 0 3510.08 937.3">
   <g id="LINHAS">
     <g id="CENTRO_OESTE" data-name="CENTRO OESTE">
       <g id="Layer_3" data-name="Layer 3">
@@ -712,52 +712,27 @@
     </g>
   </g>
 </svg>
-      <!-- EXEMPLO: -->
-      <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="...">...</svg> -->
-      
-      <!-- Cole o conteúdo completo do mapa-rafael-final.svg AQUI -->
+    <!-- Fim do SVG -->
+
+    <!-- Painel lateral -->
+    <div id="painel-lateral">
+      <img id="imagem-card" src="" alt="Card" />
     </div>
-    <div class="card-panel" id="card-panel"></div>
   </div>
 
   <script>
-    // Função para ocultar todos os cards
-    function hideAllCards() {
-      const panel = document.getElementById("card-panel");
-      const imgs = panel.querySelectorAll("img");
-      imgs.forEach((img) => img.classList.remove("active"));
-    }
-
-    // Função para mostrar um card
-    function showCard(imgName) {
-      const panel = document.getElementById("card-panel");
-      let img = document.getElementById(imgName);
-
-      if (!img) {
-        img = document.createElement("img");
-        img.src = `cards/${imgName}.png`;
-        img.id = imgName;
-        img.classList.add("active");
-        panel.appendChild(img);
-      } else {
-        hideAllCards();
-        img.classList.add("active");
-      }
-    }
-
-    // Adiciona evento a todos os botões (rects dentro de grupos com id começando por cidade)
     document.addEventListener("DOMContentLoaded", () => {
-      const allRects = document.querySelectorAll("svg g[id^=''] rect");
-
-      allRects.forEach((rect) => {
-        const id = rect.parentNode.id;
-        if (id) {
-          rect.style.cursor = "pointer";
-          rect.addEventListener("click", () => {
-            hideAllCards();
-            showCard(id);
-          });
-        }
+      // Pega todos os elementos cujos ids terminam em números (ex: rj1, sp2 etc.)
+      document.querySelectorAll('[id$="1"], [id$="2"], [id$="3"], [id$="4"]').forEach(botao => {
+        botao.style.cursor = "pointer";
+        botao.addEventListener("click", () => {
+          const nome = botao.id;
+          const url = `https://victoriabarel.github.io/mapa-interativo-quantica/cards/${nome}.png`;
+          const painel = document.getElementById('painel-lateral');
+          const img = document.getElementById('imagem-card');
+          img.src = url;
+          painel.style.display = 'flex';
+        });
       });
     });
   </script>
