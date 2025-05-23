@@ -1,15 +1,75 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-Br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mapa Interativo Quântica</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    .svg-container {
+      flex: 2;
+      padding: 10px;
+    }
+
+    .card-panel {
+      flex: 1;
+      padding: 10px;
+      border-left: 2px solid #ccc;
+      background-color: #fff;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .card-panel img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .card-panel img.active {
+      display: block;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+    }
+
+    @media screen and (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .card-panel {
+        border-left: none;
+        border-top: 2px solid #ccc;
+        min-height: auto;
+      }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- SVG EMBUTIDO -->
-  <!-- Começo do SVG -->
-  <!-- O conteúdo do mapa-rafael-final.svg foi colado aqui -->
-  <!-- Para não ocupar muito, estou indicando que o SVG completo está aqui -->
+  <div class="container">
+    <div class="svg-container">
 <svg xmlns="http://www.w3.org/2000/svg" width="3510.08" height="937.3" viewBox="0 0 3510.08 937.3">
   <g id="LINHAS">
     <g id="CENTRO_OESTE" data-name="CENTRO OESTE">
@@ -652,53 +712,52 @@
     </g>
   </g>
 </svg>
-  <!-- EXEMPLO: <svg ...> ... </svg> -->
-  <!-- Fim do SVG -->
-
-  <!-- Painel lateral -->
-  <div id="painel-lateral">
-    <img id="imagem-card" src="" alt="Card" />
+      <!-- EXEMPLO: -->
+      <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="...">...</svg> -->
+      
+      <!-- Cole o conteúdo completo do mapa-rafael-final.svg AQUI -->
+    </div>
+    <div class="card-panel" id="card-panel"></div>
   </div>
 
-  <!-- Estilo -->
-  <style>
-    #painel-lateral {
-      position: fixed;
-      right: 0;
-      top: 0;
-      width: 300px;
-      height: 100vh;
-      background-color: #f4f4f4;
-      padding: 10px;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-
-    #painel-lateral img {
-      max-width: 100%;
-      height: auto;
-    }
-
-    svg {
-      width: 100%;
-      height: auto;
-    }
-  </style>
-
-  <!-- Script -->
   <script>
-    document.querySelectorAll('[id$="1"], [id$="2"], [id$="3"], [id$="4"]').forEach(botao => {
-      botao.addEventListener('click', () => {
-        const nome = botao.id; // exemplo: "rj2", "sp1", etc
-        const url = `https://raw.githubusercontent.com/VictoriaBarel/mapa-interativo-quantica/main/cards/${nome}.png`;
-        const painel = document.getElementById('painel-lateral');
-        const img = document.getElementById('imagem-card');
+    // Função para ocultar todos os cards
+    function hideAllCards() {
+      const panel = document.getElementById("card-panel");
+      const imgs = panel.querySelectorAll("img");
+      imgs.forEach((img) => img.classList.remove("active"));
+    }
 
-        img.src = url;
-        painel.style.display = 'flex';
+    // Função para mostrar um card
+    function showCard(imgName) {
+      const panel = document.getElementById("card-panel");
+      let img = document.getElementById(imgName);
+
+      if (!img) {
+        img = document.createElement("img");
+        img.src = `cards/${imgName}.png`;
+        img.id = imgName;
+        img.classList.add("active");
+        panel.appendChild(img);
+      } else {
+        hideAllCards();
+        img.classList.add("active");
+      }
+    }
+
+    // Adiciona evento a todos os botões (rects dentro de grupos com id começando por cidade)
+    document.addEventListener("DOMContentLoaded", () => {
+      const allRects = document.querySelectorAll("svg g[id^=''] rect");
+
+      allRects.forEach((rect) => {
+        const id = rect.parentNode.id;
+        if (id) {
+          rect.style.cursor = "pointer";
+          rect.addEventListener("click", () => {
+            hideAllCards();
+            showCard(id);
+          });
+        }
       });
     });
   </script>
