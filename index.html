@@ -9,7 +9,7 @@
       font-family: Arial, sans-serif;
       height: 100vh;
       overflow: hidden;
-      background: #fff; /* fundo branco */
+      background: #fff;
       display: flex;
       justify-content: center; /* mapa centralizado inicialmente */
       align-items: center;
@@ -20,14 +20,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      flex: 1.5; /* aumenta o espaço do mapa */
-      min-width: 600px; /* nunca some em telas pequenas */
+      flex: 2; /* aumenta espaço do mapa */
+      min-width: 600px;
       transition: all 0.3s ease;
     }
 
     svg, object#mapa {
-      width: 110%; /* aumenta mapa sem alterar cards */
-      max-width: 1600px;
+      width: 120%; /* mapa maior */
+      max-width: 1800px;
       height: auto;
       display: block;
     }
@@ -41,7 +41,7 @@
       padding: 10px;
       box-sizing: border-box;
       position: relative;
-      display: none; /* oculto inicialmente */
+      display: none;
       transition: all 0.3s ease;
     }
 
@@ -56,8 +56,8 @@
     }
 
     #card {
-      max-width: 400px; /* tamanho original dos cards */
-      max-height: 300px; /* tamanho original dos cards */
+      max-width: 500px; /* cards maiores */
+      max-height: 400px;
       object-fit: contain;
       margin-top: 30px;
       border-radius: 6px;
@@ -95,7 +95,6 @@
       color: #333;
     }
 
-    /* Responsividade */
     @media (max-width: 800px) {
       body {
         flex-direction: column;
@@ -112,8 +111,8 @@
       }
 
       #card {
-        max-width: 60%;
-        max-height: 150px;
+        max-width: 70%;
+        max-height: 200px;
         margin-top: 0;
       }
 
@@ -195,7 +194,7 @@
 
     btnFechar.addEventListener('click', () => {
       painel.style.display = 'none';
-      mapaContainer.style.justifyContent = 'center'; // centraliza mapa novamente
+      mapaContainer.style.justifyContent = 'center';
       mapaContainer.style.marginRight = '0';
     });
 
