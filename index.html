@@ -8,7 +8,6 @@
       margin: 0;
       font-family: Arial, sans-serif;
       height: 100vh;
-      overflow: hidden;
       background: #fff;
       display: flex;
       justify-content: center;
@@ -18,12 +17,11 @@
 
     #mapa-container {
       display: flex;
-      justify-content: center; /* mapa centralizado inicialmente */
+      justify-content: center; /* centraliza mapa inicialmente */
       align-items: center;
-      flex: 2;
       min-width: 600px;
-      margin-right: 0; /* sem margem lateral */
       transition: all 0.3s ease;
+      flex-shrink: 0; /* impede de encolher */
     }
 
     svg, object#mapa {
@@ -44,6 +42,7 @@
       position: relative;
       display: none;
       transition: all 0.3s ease;
+      flex-shrink: 0;
     }
 
     #fechar {
@@ -57,7 +56,7 @@
     }
 
     #card {
-      max-width: 500px; /* cards maiores */
+      max-width: 500px;
       max-height: 400px;
       object-fit: contain;
       margin-top: 30px;
@@ -195,8 +194,7 @@
 
     btnFechar.addEventListener('click', () => {
       painel.style.display = 'none';
-      mapaContainer.style.justifyContent = 'center'; // centraliza mapa novamente
-      mapaContainer.style.marginRight = '0';
+      mapaContainer.style.justifyContent = 'center'; // mapa volta ao centro
     });
 
     document.getElementById('mapa').addEventListener('load', function() {
@@ -212,7 +210,7 @@
             painel.style.display = 'flex';
             carregarCard(cidadeAtual, indiceAtual);
             if(window.innerWidth > 800){
-              mapaContainer.style.justifyContent = 'flex-start';
+              mapaContainer.style.justifyContent = 'flex-start'; // mapa vai para esquerda
               mapaContainer.style.marginRight = '20px';
             } else {
               mapaContainer.style.justifyContent = 'center';
