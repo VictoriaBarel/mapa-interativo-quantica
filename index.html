@@ -11,17 +11,18 @@
       overflow: hidden;
       background: #fff;
       display: flex;
-      justify-content: center; /* mapa centralizado inicialmente */
+      justify-content: center;
       align-items: center;
       transition: all 0.3s ease;
     }
 
     #mapa-container {
       display: flex;
-      justify-content: center;
+      justify-content: center; /* mapa centralizado inicialmente */
       align-items: center;
-      flex: 2; /* aumenta espaço do mapa */
+      flex: 2;
       min-width: 600px;
+      margin-right: 0; /* sem margem lateral */
       transition: all 0.3s ease;
     }
 
@@ -194,7 +195,7 @@
 
     btnFechar.addEventListener('click', () => {
       painel.style.display = 'none';
-      mapaContainer.style.justifyContent = 'center';
+      mapaContainer.style.justifyContent = 'center'; // centraliza mapa novamente
       mapaContainer.style.marginRight = '0';
     });
 
