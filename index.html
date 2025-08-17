@@ -21,13 +21,13 @@
       justify-content: center;
       align-items: center;
       flex: 1.5; /* aumenta o espaço do mapa */
+      min-width: 600px; /* nunca some em telas pequenas */
       transition: all 0.3s ease;
-      min-width: 400px; /* nunca some */
     }
 
     svg, object#mapa {
-      width: 100%;
-      max-width: 1600px; /* deixa maior */
+      width: 110%; /* aumenta mapa sem alterar cards */
+      max-width: 1600px;
       height: auto;
       display: block;
     }
@@ -56,8 +56,8 @@
     }
 
     #card {
-      max-width: 100%;
-      max-height: 80%;
+      max-width: 400px; /* tamanho original dos cards */
+      max-height: 300px; /* tamanho original dos cards */
       object-fit: contain;
       margin-top: 30px;
       border-radius: 6px;
@@ -195,7 +195,7 @@
 
     btnFechar.addEventListener('click', () => {
       painel.style.display = 'none';
-      mapaContainer.style.justifyContent = 'center'; // centraliza mapa de novo
+      mapaContainer.style.justifyContent = 'center'; // centraliza mapa novamente
       mapaContainer.style.marginRight = '0';
     });
 
