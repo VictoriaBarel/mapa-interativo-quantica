@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Interativo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="mapa">
+    <!-- Aqui você coloca seu SVG exportado do Illustrator -->
+    <!-- Exemplo: -->
+    <object id="svgmapa" data="mapa/mapa.svg" type="image/svg+xml"></object>
+  </div>
+
+  <div id="painel">
+    <button id="prev">⬅</button>
+    <img id="card" src="" alt="Card da cidade">
+    <button id="next">➡</button>
+    <div id="contador"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
