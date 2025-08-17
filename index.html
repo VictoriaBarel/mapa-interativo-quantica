@@ -20,13 +20,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex: 1.5; /* aumenta o espaço do mapa */
       transition: all 0.3s ease;
+      min-width: 400px; /* nunca some */
     }
 
-    svg {
-      width: 95%;
-      max-width: 1400px;
+    svg, object#mapa {
+      width: 100%;
+      max-width: 1600px; /* deixa maior */
       height: auto;
+      display: block;
     }
 
     #painel {
@@ -148,7 +151,6 @@
     const btnNext = document.getElementById('next');
     const btnFechar = document.getElementById('fechar');
     const mapaContainer = document.getElementById('mapa-container');
-    const body = document.body;
 
     let cidadeAtual = null;
     let indiceAtual = 1;
@@ -193,8 +195,8 @@
 
     btnFechar.addEventListener('click', () => {
       painel.style.display = 'none';
-      // centralizar mapa novamente
-      mapaContainer.style.margin = '0 auto';
+      mapaContainer.style.justifyContent = 'center'; // centraliza mapa de novo
+      mapaContainer.style.marginRight = '0';
     });
 
     document.getElementById('mapa').addEventListener('load', function() {
@@ -209,10 +211,11 @@
             indiceAtual = 1;
             painel.style.display = 'flex';
             carregarCard(cidadeAtual, indiceAtual);
-            // mover mapa para esquerda quando painel aparece
             if(window.innerWidth > 800){
+              mapaContainer.style.justifyContent = 'flex-start';
               mapaContainer.style.marginRight = '20px';
             } else {
+              mapaContainer.style.justifyContent = 'center';
               mapaContainer.style.margin = '0 auto';
             }
           });
