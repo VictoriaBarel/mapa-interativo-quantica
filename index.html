@@ -14,7 +14,7 @@
 
     /* Área do mapa */
     #mapa-container {
-      flex: 1;
+      flex: 1.5; /* mapa maior */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -22,13 +22,14 @@
     }
 
     svg {
-      width: 90%;
+      width: 95%;
+      max-width: 1400px;
       height: auto;
     }
 
     /* Painel lateral */
     #painel {
-      width: 350px;
+      flex: 1;
       background: #fff;
       border-left: 2px solid #ddd;
       display: flex;
@@ -121,7 +122,7 @@
 <body>
 
   <div id="mapa-container">
-    <object id="mapa" type="image/svg+xml" data="mapa.svg"></object>
+    <object id="mapa" type="image/svg+xml" data="https://victoriabarel.github.io/mapa-interativo-quantica/mapa.svg"></object>
   </div>
 
   <div id="painel">
@@ -145,25 +146,24 @@
     let cidadeAtual = null;
     let indiceAtual = 1;
 
-    // Lista completa de cards
     const listaCards = [
       "salvador-1","belohorizonte-1","recife-1","recife-2","natal-1",
       "saocarlos-1","bauru-1","campinas-1","campinas-2","campinas-3",
-      "saopaulo-1","saopaulo-2","saocarlos-2","niteroi-1","riodejaneiro-1",
-      "niteroi-2","riodejaneiro-2","riodejaneiro-3","florianopolis-1",
-      "santamaria-1","curitiba-1","uberlandia-1","goiania-1","fortaleza-1",
-      "maceio-1","arapiraca-1","cuiaba-1","patrocinio-1","araras-1",
-      "juizdefora-1","vitoria-1","petropolis-1","sorocaba-1",
-      "cornelioprocopio-1","itapeva-1","pontagrossa-1","santoandre-1",
-      "voltaredonda-1","voltaredonda-2","florestal-1"
+      "saopaulo-1","saopaulo-2","saocarlos-2","niteroi-1","niteroi-2",
+      "riodejaneiro-1","riodejaneiro-2","riodejaneiro-3",
+      "florianopolis-1","santamaria-1","curitiba-1","uberlandia-1",
+      "goiania-1","fortaleza-1","maceio-1","arapiraca-1","cuiaba-1",
+      "patrocinio-1","araras-1","juizdefora-1","vitoria-1","petropolis-1",
+      "sorocaba-1","cornelioprocopio-1","itapeva-1","pontagrossa-1",
+      "santoandre-1","voltaredonda-1","voltaredonda-2","florestal-1"
     ];
 
-    // Monta objeto {cidade: [cards]}
+    // Cards por cidade usando links GitHub Pages
     const cardsPorCidade = {};
     listaCards.forEach(nome => {
       const cidade = nome.replace(/-\d+$/, "");
       if (!cardsPorCidade[cidade]) cardsPorCidade[cidade] = [];
-      cardsPorCidade[cidade].push(`cards/${nome}.jpg`);
+      cardsPorCidade[cidade].push(`https://victoriabarel.github.io/mapa-interativo-quantica/cards/${nome}.jpg`);
     });
 
     function carregarCard(cidade, indice) {
@@ -205,7 +205,6 @@
         }
       });
     });
-
   </script>
 </body>
 </html>
