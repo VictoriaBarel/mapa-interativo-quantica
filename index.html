@@ -13,21 +13,22 @@
       justify-content: center;
       align-items: center;
       transition: all 0.3s ease;
+      overflow-x: hidden;
     }
 
     #mapa-container {
       display: flex;
       justify-content: center; /* centraliza mapa inicialmente */
       align-items: center;
-      min-width: 600px;
-      transition: all 0.3s ease;
       flex-shrink: 0; /* impede de encolher */
+      margin: 0 auto;
+      transition: all 0.3s ease;
     }
 
-    svg, object#mapa {
-      width: 120%; /* mapa maior */
-      max-width: 1800px;
-      height: auto;
+    object#mapa {
+      width: auto;      /* tamanho original do SVG */
+      height: auto;     /* mantém proporção */
+      max-width: none;  /* permite tamanho completo */
       display: block;
     }
 
@@ -194,7 +195,8 @@
 
     btnFechar.addEventListener('click', () => {
       painel.style.display = 'none';
-      mapaContainer.style.justifyContent = 'center'; // mapa volta ao centro
+      mapaContainer.style.justifyContent = 'center'; // centraliza mapa novamente
+      mapaContainer.style.marginRight = '0';
     });
 
     document.getElementById('mapa').addEventListener('load', function() {
@@ -209,6 +211,7 @@
             indiceAtual = 1;
             painel.style.display = 'flex';
             carregarCard(cidadeAtual, indiceAtual);
+
             if(window.innerWidth > 800){
               mapaContainer.style.justifyContent = 'flex-start'; // mapa vai para esquerda
               mapaContainer.style.marginRight = '20px';
