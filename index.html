@@ -1,273 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mapa Interativo - Quântica</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Interativo Quântica</title>
   <style>
-    /* ====== BASE ====== */
-    :root{
-      --painel-w: 520px;  /* largura do painel no desktop */
-      --gap: 24px;
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background: #fff; /* mude para 'transparent' se quiser fundo transparente */
-      color: #222;
-    }
-
-    /* ====== LAYOUT ====== */
-    #app {
+      background: transparent; /* fundo transparente */
       display: flex;
-      align-items: center;
-      justify-content: center;     /* mapa centralizado inicialmente */
-      gap: var(--gap);
-      padding: 16px;
-      min-height: 100vh;
-      width: 100%;
-      overflow: hidden; /* evita barra horizontal quando painel entra */
-    }
-    #app.aberto {
-      justify-content: flex-start; /* quando abre o painel, mapa vai para a esquerda */
-    }
-
-    /* Mapa (não encolhe) */
-    #mapa-container {
-      display: flex;
-      align-items: center;
       justify-content: center;
-      flex-shrink: 0; /* não encolher! */
+      align-items: flex-start;
+      height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* O segredo pra manter o tamanho “original” sem sumir:
-       - width/height AUTO respeitam o tamanho intrínseco do SVG
-       - mas com limites de viewport pra não estourar tela
-    */
-    object#mapa {
-      display: block;
-      width: auto;
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      width: 100%;
+      max-width: 1400px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .mapa {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mapa svg, .mapa img {
+      max-width: 100%;
       height: auto;
-      max-width: min(95vw, 1700px); /* pode aumentar 1700px se quiser ainda maior */
-      max-height: 90vh;
     }
 
-    /* ====== PAINEL ====== */
-    #painel {
-      display: none; /* escondido até clicar */
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      width: var(--painel-w);
-      padding: 16px;
+    .painel {
+      width: 350px;
+      max-width: 100%;
       background: #fff;
-      border-left: 1px solid #e5e5e5;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      position: relative;
-      z-index: 1;
-      flex-shrink: 0; /* não encolher o painel */
+      border-left: 2px solid #ccc;
+      padding: 10px;
+      overflow-y: auto;
+      display: none; /* escondido por padrão */
     }
-    #painel.mostrar { display: flex; }
 
-    #fechar {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      cursor: pointer;
-      font-size: 20px;
-      line-height: 1;
-      color: #666;
-      border: none;
-      background: transparent;
-    }
-    #fechar:hover { color: #000; }
-
-    #card {
+    .painel img {
       width: 100%;
-      max-height: 70vh;            /* grande, mas sem estourar a tela */
-      object-fit: contain;
+      margin-bottom: 10px;
       border-radius: 8px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-      background: #fff;
     }
 
-    .navegacao {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-top: 4px;
-      user-select: none;
-    }
-    .navegacao button {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      border: 1px solid #bbb;
-      background: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform .15s ease, background .2s ease, border-color .2s ease;
-    }
-    .navegacao button:hover { background: #f4f4f4; border-color: #888; transform: translateY(-1px); }
-    .navegacao button:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    #indicador { font-size: 14px; color: #333; min-width: 70px; text-align: center; }
-
-    /* ====== MOBILE ====== */
-    @media (max-width: 900px) {
-      #app { flex-direction: column; justify-content: flex-start; gap: 12px; }
-      #app.aberto { justify-content: flex-start; } /* mantém */
-      object#mapa { max-width: 100vw; max-height: 55vh; }
-      #painel {
-        width: 100%;
-        border-left: none;
-        border-top: 1px solid #e5e5e5;
-        box-shadow: 0 -8px 24px rgba(0,0,0,0.06);
-      }
-      #card { max-height: 45vh; }
+    .painel.active {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <div id="app">
-    <!-- Mapa -->
-    <div id="mapa-container">
-      <!-- Importante: o mapa.svg precisa estar na RAIZ do repositório junto com este index.html -->
-      <object id="mapa" type="image/svg+xml" data="mapa.svg" aria-label="Mapa Interativo"></object>
+  <div class="container">
+    <div class="mapa">
+      <!-- Usa seu SVG exportado do Illustrator -->
+      <img src="mapa.svg" alt="Mapa Interativo">
     </div>
-
-    <!-- Painel de cards -->
-    <aside id="painel" aria-live="polite">
-      <button id="fechar" title="Fechar">✖</button>
-      <img id="card" src="" alt="Card da cidade" />
-      <div class="navegacao">
-        <button id="prev" title="Anterior">⟵</button>
-        <span id="indicador">0 / 0</span>
-        <button id="next" title="Próximo">⟶</button>
-      </div>
-    </aside>
+    <div class="painel" id="painel">
+      <img id="cardImagem" src="" alt="Card">
+    </div>
   </div>
 
   <script>
-    // ====== Configuração de cards ======
-    // Basta garantir que os JPGs existam em /cards/nome.jpg (minúsculo, sem acento)
-    const listaCards = [
-      "salvador-1","belohorizonte-1","recife-1","recife-2","natal-1",
-      "saocarlos-1","bauru-1","campinas-1","campinas-2","campinas-3",
-      "saopaulo-1","saopaulo-2","saocarlos-2","niteroi-1","niteroi-2",
-      "riodejaneiro-1","riodejaneiro-2","riodejaneiro-3",
-      "florianopolis-1","santamaria-1","curitiba-1","uberlandia-1",
-      "goiania-1","fortaleza-1","maceio-1","arapiraca-1","cuiaba-1",
-      "patrocinio-1","araras-1","juizdefora-1","vitoria-1","petropolis-1",
-      "sorocaba-1","cornelioprocopio-1","itapeva-1","pontagrossa-1",
-      "santoandre-1","voltaredonda-1","voltaredonda-2","florestal-1"
-    ];
+    // Aqui você vincula os botões do seu SVG aos cards
+    // Exemplo: se o botão/id no SVG for "Cidade1" e a imagem for "Cidade1.png"
 
-    // Monta { cidade: [urls...] }
-    const cardsPorCidade = {};
-    listaCards.forEach(nome => {
-      const cidade = nome.replace(/-\d+$/, "");
-      (cardsPorCidade[cidade] ??= []).push(`cards/${nome}.jpg`);
-    });
+    const painel = document.getElementById("painel");
+    const cardImagem = document.getElementById("cardImagem");
 
-    // ====== Elementos ======
-    const app        = document.getElementById('app');
-    const painel     = document.getElementById('painel');
-    const cardImg    = document.getElementById('card');
-    const indicador  = document.getElementById('indicador');
-    const btnPrev    = document.getElementById('prev');
-    const btnNext    = document.getElementById('next');
-    const btnFechar  = document.getElementById('fechar');
-    const objMapa    = document.getElementById('mapa');
-
-    let cidadeAtual = null;
-    let indiceAtual = 1;
-
-    function carregarCard(cidade, indice) {
-      const lista = cardsPorCidade[cidade];
-      if (!lista) return;
-      cardImg.src = lista[indice - 1];
-      cardImg.alt = `Card ${indice} de ${lista.length} — ${cidade}`;
-      indicador.textContent = `${indice} / ${lista.length}`;
-      btnPrev.disabled = indice <= 1;
-      btnNext.disabled = indice >= lista.length;
+    // Quando clicar em uma cidade
+    function abrirCard(nomeCidade) {
+      cardImagem.src = nomeCidade + ".png"; // Ajuste o caminho das imagens se necessário
+      painel.classList.add("active");
     }
 
-    function abrirPainel(cidade) {
-      cidadeAtual = cidade;
-      indiceAtual = 1;
-      carregarCard(cidadeAtual, indiceAtual);
-      painel.classList.add('mostrar');
-      app.classList.add('aberto'); // empurra o mapa para a esquerda no desktop, sem reduzir
-    }
-
-    function fecharPainel() {
-      painel.classList.remove('mostrar');
-      app.classList.remove('aberto'); // mapa volta a ficar centralizado
-      cidadeAtual = null;
-      indiceAtual = 1;
-    }
-
-    btnPrev.addEventListener('click', () => {
-      if (!cidadeAtual) return;
-      if (indiceAtual > 1) {
-        indiceAtual--;
-        carregarCard(cidadeAtual, indiceAtual);
-      }
-    });
-
-    btnNext.addEventListener('click', () => {
-      if (!cidadeAtual) return;
-      const total = cardsPorCidade[cidadeAtual]?.length ?? 0;
-      if (indiceAtual < total) {
-        indiceAtual++;
-        carregarCard(cidadeAtual, indiceAtual);
-      }
-    });
-
-    btnFechar.addEventListener('click', fecharPainel);
-
-    // Atalhos de teclado ← →
-    window.addEventListener('keydown', (e) => {
-      if (!cidadeAtual) return;
-      if (e.key === 'ArrowLeft')  btnPrev.click();
-      if (e.key === 'ArrowRight') btnNext.click();
-      if (e.key === 'Escape')     fecharPainel();
-    });
-
-    // ====== Ligações no SVG ======
-    objMapa.addEventListener('load', function() {
-      const svgDoc = this.contentDocument;
-      if (!svgDoc) return;
-
-      // 1) Adiciona cursor de mão e clique em TODAS AS CIDADES com cards
-      Object.keys(cardsPorCidade).forEach(cidade => {
-        const el = svgDoc.getElementById(cidade);
-        if (el) {
-          el.style.cursor = 'pointer';
-          el.addEventListener('click', () => abrirPainel(cidade));
-        }
-      });
-
-      // 2) Se o Illustrator tiver círculos internos com ids tipo "cidade-2",
-      //    isso não atrapalha — o clique está no <g id="cidade"> do grupo.
-      //    Se você quiser deixar os círculos também clicáveis:
-      const todosIds = svgDoc.querySelectorAll('[id]');
-      todosIds.forEach(node => {
-        const id = node.id;
-        const m  = id.match(/^([a-z0-9]+)-\d+$/i);
-        if (m && cardsPorCidade[m[1]]) {
-          node.style.cursor = 'pointer';
-          node.addEventListener('click', () => abrirPainel(m[1]));
-        }
-      });
-    });
+    // Exemplo de teste:
+    // abrirCard("Cidade1");
   </script>
 </body>
 </html>
