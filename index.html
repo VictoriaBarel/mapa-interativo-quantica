@@ -12,7 +12,6 @@
       overflow: hidden;
     }
 
-    /* Área do mapa */
     #mapa-container {
       flex: 1;
       display: flex;
@@ -26,7 +25,6 @@
       height: auto;
     }
 
-    /* Painel lateral */
     #painel {
       width: 350px;
       background: #fff;
@@ -36,7 +34,7 @@
       align-items: center;
       padding: 10px;
       box-sizing: border-box;
-      display: none; /* começa escondido */
+      display: none;
     }
 
     #card {
@@ -65,12 +63,11 @@
   </style>
 </head>
 <body>
-  <!-- Mapa -->
+
   <div id="mapa-container">
-    <object id="mapa" type="image/svg+xml" data="mapa/mapa.svg"></object>
+    <object id="mapa" type="image/svg+xml" data="mapa.svg"></object>
   </div>
 
-  <!-- Painel lateral -->
   <div id="painel">
     <img id="card" src="" alt="Card da cidade">
     <div class="navegacao">
@@ -91,23 +88,32 @@
     let indiceAtual = 1;
     let totalCards = 1;
 
-    // Defina quantos cards cada cidade tem (mesmo que provisório)
-    const totalCardsPorCidade = {
-      saopaulo: 2,
-      rio: 2,
-      curitiba: 2,
-      campinas: 1
-      // adicione todas as cidades aqui
-    };
+    // Lista completa de cards que você mandou
+    const listaCards = [
+      "salvador-1","belohorizonte-1","recife-1","recife-2","natal-1",
+      "saocarlos-1","bauru-1","campinas-1","campinas-2","campinas-3",
+      "saopaulo-1","saopaulo-2","saocarlos-2","niteroi-1","riodejaneiro-1",
+      "niteroi-1","riodejaneiro-2","riodejaneiro-3","florianopolis-1",
+      "santamaria-1","curitiba-1","uberlandia-1","goiania-1","fortaleza-1",
+      "maceio-1","arapiraca-1","cuiaba-1","patrocinio-1","araras-1",
+      "juizdefora-1","vitoria-1","petropolis-1","sorocaba-1",
+      "cornelioprocopio-1","itapeva-1","pontagrossa-1","santoandre-1",
+      "voltaredonda-1","voltaredonda-2","florestal-1"
+    ];
 
-    // Função para carregar card
+    // Monta objeto {cidade: [cards]}
+    const cardsPorCidade = {};
+    listaCards.forEach(nome => {
+      const cidade = nome.replace(/-\d+$/, ""); // remove o -1, -2 etc
+      if (!cardsPorCidade[cidade]) cardsPorCidade[cidade] = [];
+      cardsPorCidade[cidade].push(`cards/${nome}.jpg`);
+    });
+
     function carregarCard(cidade, indice) {
-      const caminho = `cards/${cidade}-${indice}.jpg`;
-      cardImg.src = caminho;
-      indicador.textContent = `${indice} / ${totalCards}`;
+      cardImg.src = cardsPorCidade[cidade][indice - 1];
+      indicador.textContent = `${indice} / ${cardsPorCidade[cidade].length}`;
     }
 
-    // Navegação
     btnPrev.addEventListener('click', () => {
       if (indiceAtual > 1) {
         indiceAtual--;
@@ -116,31 +122,30 @@
     });
 
     btnNext.addEventListener('click', () => {
-      if (indiceAtual < totalCards) {
+      if (indiceAtual < cardsPorCidade[cidadeAtual].length) {
         indiceAtual++;
         carregarCard(cidadeAtual, indiceAtual);
       }
     });
 
-    // Quando o mapa carregar
-    document.getElementById('mapa').addEventListener('load', function () {
+    document.getElementById('mapa').addEventListener('load', function() {
       const svgDoc = this.contentDocument;
-      const cidades = svgDoc.querySelectorAll('[id]');
+      const cidadesSVG = svgDoc.querySelectorAll('[id]');
 
-      cidades.forEach(cidade => {
-        // muda o cursor quando passar o mouse
-        cidade.style.cursor = 'pointer';
-
-        // clique
-        cidade.addEventListener('click', () => {
-          cidadeAtual = cidade.id;
-          totalCards = totalCardsPorCidade[cidadeAtual] || 1;
-          indiceAtual = 1;
-          painel.style.display = 'flex';
-          carregarCard(cidadeAtual, indiceAtual);
-        });
+      cidadesSVG.forEach(cidade => {
+        if (cardsPorCidade[cidade.id]) { // só ativa se tiver cards
+          cidade.style.cursor = 'pointer';
+          cidade.addEventListener('click', () => {
+            cidadeAtual = cidade.id;
+            indiceAtual = 1;
+            painel.style.display = 'flex';
+            carregarCard(cidadeAtual, indiceAtual);
+          });
+        }
       });
     });
+
   </script>
+
 </body>
 </html>
