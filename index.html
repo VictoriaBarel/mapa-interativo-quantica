@@ -7,8 +7,8 @@
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background: transparent; /* fundo transparente */
+      font-family: Arial, sans-serif;
+      background: #fff; /* fundo branco */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -20,80 +20,79 @@
       align-items: center;
       width: 100%;
       height: 100%;
-      position: relative;
     }
     .mapa {
-      flex-shrink: 0;
-      transition: transform 0.3s ease;
-      max-width: 90%;
-      max-height: 90%;
+      flex: 0 0 auto;
+      max-width: 60%;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .painel {
-      position: absolute;
-      right: -400px; /* começa fora da tela */
-      top: 0;
-      width: 400px;
-      height: 100%;
-      background: white;
-      box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-      overflow-y: auto;
-      transition: right 0.3s ease;
+      flex: 0 0 30%;
+      max-width: 400px;
+      background: #fff;
       padding: 20px;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
     }
-    .painel.ativo {
-      right: 0;
+    .painel img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .ativo .painel {
+      display: flex;
     }
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
       }
+      .mapa {
+        max-width: 100%;
+      }
       .painel {
         width: 100%;
-        height: 300px;
-        right: 0;
-        top: 100%;
-        transition: top 0.3s ease;
-      }
-      .painel.ativo {
-        top: calc(100% - 300px);
+        max-width: none;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="mapa" id="mapa">
-      <!-- Seu SVG vai aqui -->
-      <object type="image/svg+xml" data="mapa.svg" id="svgmap"></object>
+  <div class="container" id="app">
+    <div class="mapa">
+      <!-- SVG será embutido aqui -->
+      <object id="svgMapa" data="mapa.svg" type="image/svg+xml"></object>
     </div>
-    <div class="painel" id="painel">
-      <h2>Card</h2>
-      <img id="card-img" src="" alt="Card" style="max-width:100%">
-    </div>
+    <div class="painel" id="painel"></div>
   </div>
 
   <script>
-    const painel = document.getElementById('painel');
-    const cardImg = document.getElementById('card-img');
+    const painel = document.getElementById("painel");
+    const app = document.getElementById("app");
 
-    document.getElementById('svgmap').addEventListener('load', function () {
+    document.getElementById("svgMapa").addEventListener("load", function() {
       const svgDoc = this.contentDocument;
-      if (!svgDoc) return;
 
-      // Exemplo: botões no SVG com IDs iguais ao nome do arquivo
       const cidades = ["Fortaleza", "Rio", "Niteroi"];
 
       cidades.forEach(cidade => {
         const el = svgDoc.getElementById(cidade);
-        if (el) {
+        if(el) {
           el.style.cursor = "pointer";
-          el.addEventListener("click", () => {
-            cardImg.src = `${cidade}.png`; // imagem deve estar na mesma pasta
-            painel.classList.add("ativo");
-          });
+          el.addEventListener("click", () => abrirCard(cidade));
         }
       });
     });
+
+    function abrirCard(cidade) {
+      painel.innerHTML = `<img src="${cidade}.jpg" alt="${cidade}">`;
+      app.classList.add("ativo");
+    }
   </script>
 </body>
 </html>
