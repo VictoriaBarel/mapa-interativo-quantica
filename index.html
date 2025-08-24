@@ -4,85 +4,76 @@
   <meta charset="UTF-8">
   <title>Mapa Interativo - Quântica</title>
   <style>
-    body {
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      overflow: hidden;
-    }
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;  /* centraliza no Elementor */
+  align-items: center;      /* centraliza verticalmente */
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;  /* fundo transparente */
+}
 
-    /* Wrapper para funcionar bem no Elementor */
-    .mapa-wrapper {
-      width: 100%;
-      max-width: 1200px; /* limite em telas grandes */
-      height: 100%;
-      display: flex;
-      position: relative;
-    }
+.mapa-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  display: flex;
+  align-items: center;  /* card e mapa ficam alinhados verticalmente */
+  position: relative;
+}
 
-    /* Área do mapa */
-    #mapa-container {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: margin-right 0.4s ease; /* animação quando painel abre */
-    }
+#mapa-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: margin-right 0.4s ease;
+}
 
-    svg {
-      width: 100%;
-      height: auto;
-      max-width: 1000px; /* controle do tamanho máximo */
-    }
+svg {
+  width: 100%;
+  height: auto;
+  max-width: 1000px;
+}
 
-    /* Painel lateral */
-    #painel {
-      width: 350px;
-      background: #fff;
-      border-left: 2px solid #ddd;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px;
-      box-sizing: border-box;
-      position: absolute;
-      top: 0;
-      right: -350px; /* começa fora da tela */
-      height: 100%;
-      box-shadow: -2px 0 6px rgba(0,0,0,0.15);
-      transition: right 0.4s ease; /* animação suave */
-      z-index: 10;
-    }
+/* Painel lateral */
+#painel {
+  width: 350px;
+  background: transparent;   /* fundo transparente */
+  border-left: none;         /* remove a coluna feia */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;   /* centraliza o card verticalmente */
+  padding: 10px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  right: -350px;
+  height: 100%;
+  transition: right 0.4s ease;
+  z-index: 10;
+}
 
-    #painel.ativo {
-      right: 0; /* entra suavemente */
-    }
+#painel.ativo {
+  right: 0;
+}
 
-    #mapa-container.deslocado {
-      margin-right: 350px; /* empurra o mapa para esquerda */
-    }
+#mapa-container.deslocado {
+  margin-right: 350px; /* mapa se desloca, mas não encolhe */
+}
 
-    #fechar {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-      font-size: 20px;
-      font-weight: bold;
-      color: #555;
-    }
-
-    #card {
-      max-width: 100%;
-      max-height: 80%;
-      object-fit: contain;
-      margin-top: 30px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
+#card {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  margin: auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  background: transparent; /* sem fundo */
+}
 
     .navegacao {
       display: flex;
