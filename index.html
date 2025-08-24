@@ -7,11 +7,19 @@
     body {
       margin: 0;
       display: flex;
+      justify-content: center;
+      align-items: center;
       font-family: Arial, sans-serif;
       height: 100vh;
       overflow: hidden;
-      justify-content: center;
-      align-items: center;
+    }
+
+    /* Wrapper para funcionar bem no Elementor */
+    .mapa-wrapper {
+      width: 100%;
+      max-width: 1200px; /* limite em telas grandes */
+      height: 100%;
+      display: flex;
       position: relative;
     }
 
@@ -21,30 +29,40 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: transparent;
+      transition: margin-right 0.4s ease; /* animação quando painel abre */
     }
 
     svg {
-      width: 90%;
+      width: 100%;
       height: auto;
+      max-width: 1000px; /* controle do tamanho máximo */
     }
 
-    /* Painel lateral (sobreposto) */
+    /* Painel lateral */
     #painel {
       width: 350px;
       background: #fff;
       border-left: 2px solid #ddd;
-      display: none;
+      display: flex;
       flex-direction: column;
       align-items: center;
       padding: 10px;
       box-sizing: border-box;
-      position: absolute;   /* sobreposto */
+      position: absolute;
       top: 0;
-      right: 0;
+      right: -350px; /* começa fora da tela */
       height: 100%;
       box-shadow: -2px 0 6px rgba(0,0,0,0.15);
+      transition: right 0.4s ease; /* animação suave */
       z-index: 10;
+    }
+
+    #painel.ativo {
+      right: 0; /* entra suavemente */
+    }
+
+    #mapa-container.deslocado {
+      margin-right: 350px; /* empurra o mapa para esquerda */
     }
 
     #fechar {
@@ -102,6 +120,10 @@
       body {
         flex-direction: column;
       }
+      .mapa-wrapper {
+        flex-direction: column;
+        max-width: 100%;
+      }
       #painel {
         width: 100%;
         border-left: none;
@@ -111,11 +133,18 @@
         padding: 5px;
         height: auto;
         position: fixed;
-        bottom: 0;
+        bottom: -200px;
         top: auto;
         right: 0;
         left: 0;
         box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
+        transition: bottom 0.4s ease;
+      }
+      #painel.ativo {
+        bottom: 0;
+      }
+      #mapa-container.deslocado {
+        margin-right: 0; /* em mobile não empurra */
       }
       #card {
         max-width: 60%;
@@ -134,22 +163,25 @@
 </head>
 <body>
 
-  <div id="mapa-container">
-    <object id="mapa" type="image/svg+xml" data="mapa.svg"></object>
-  </div>
+  <div class="mapa-wrapper">
+    <div id="mapa-container">
+      <object id="mapa" type="image/svg+xml" data="mapa.svg"></object>
+    </div>
 
-  <div id="painel">
-    <span id="fechar">✖</span>
-    <img id="card" src="" alt="Card da cidade">
-    <div class="navegacao">
-      <button id="prev">⟵</button>
-      <span id="indicador">0 / 0</span>
-      <button id="next">⟶</button>
+    <div id="painel">
+      <span id="fechar">✖</span>
+      <img id="card" src="" alt="Card da cidade">
+      <div class="navegacao">
+        <button id="prev">⟵</button>
+        <span id="indicador">0 / 0</span>
+        <button id="next">⟶</button>
+      </div>
     </div>
   </div>
 
   <script>
     const painel = document.getElementById('painel');
+    const mapaContainer = document.getElementById('mapa-container');
     const cardImg = document.getElementById('card');
     const indicador = document.getElementById('indicador');
     const btnPrev = document.getElementById('prev');
@@ -200,7 +232,8 @@
     });
 
     btnFechar.addEventListener('click', () => {
-      painel.style.display = 'none';
+      painel.classList.remove('ativo');
+      mapaContainer.classList.remove('deslocado');
     });
 
     document.getElementById('mapa').addEventListener('load', function() {
@@ -213,13 +246,13 @@
           cidade.addEventListener('click', () => {
             cidadeAtual = cidade.id;
             indiceAtual = 1;
-            painel.style.display = 'flex';
             carregarCard(cidadeAtual, indiceAtual);
+            painel.classList.add('ativo');
+            mapaContainer.classList.add('deslocado');
           });
         }
       });
     });
-
   </script>
 </body>
 </html>
