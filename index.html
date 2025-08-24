@@ -7,12 +7,12 @@
 body {
   margin: 0;
   display: flex;
-  justify-content: center;  /* centraliza no Elementor */
-  align-items: center;      /* centraliza verticalmente */
+  justify-content: center;
+  align-items: center;
   font-family: Arial, sans-serif;
   height: 100vh;
   overflow: hidden;
-  background: transparent;  /* fundo transparente */
+  background: transparent;
 }
 
 .mapa-wrapper {
@@ -20,7 +20,7 @@ body {
   max-width: 1200px;
   height: 100%;
   display: flex;
-  align-items: center;  /* card e mapa ficam alinhados verticalmente */
+  align-items: center;
   position: relative;
 }
 
@@ -41,12 +41,12 @@ svg {
 /* Painel lateral */
 #painel {
   width: 350px;
-  background: transparent;   /* fundo transparente */
-  border-left: none;         /* remove a coluna feia */
+  background: transparent;
+  border-left: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;   /* centraliza o card verticalmente */
+  justify-content: center;
   padding: 10px;
   box-sizing: border-box;
   position: absolute;
@@ -62,7 +62,7 @@ svg {
 }
 
 #mapa-container.deslocado {
-  margin-right: 350px; /* mapa se desloca, mas não encolhe */
+  margin-right: 350px;
 }
 
 #card {
@@ -70,86 +70,113 @@ svg {
   max-height: 90%;
   object-fit: contain;
   margin: auto;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  background: transparent; /* sem fundo */
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background: transparent;
+  position: relative;
 }
 
-    .navegacao {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-top: 10px;
-    }
+/* Botão fechar */
+#fechar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: 0.2s;
+}
 
-    .navegacao button {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid #888;
-      background-color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: 0.2s;
-    }
+#fechar:hover {
+  background: rgba(255,255,255,1);
+}
 
-    .navegacao button:hover {
-      background-color: #f0f0f0;
-      border-color: #555;
-    }
+/* Navegação */
+.navegacao {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 12px;
+}
 
-    #indicador {
-      font-size: 14px;
-      color: #333;
-    }
+.navegacao button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #aaa;
+  background-color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  transition: 0.2s;
+}
 
-    /* Responsividade */
-    @media (max-width: 800px) {
-      body {
-        flex-direction: column;
-      }
-      .mapa-wrapper {
-        flex-direction: column;
-        max-width: 100%;
-      }
-      #painel {
-        width: 100%;
-        border-left: none;
-        border-top: 2px solid #ddd;
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 5px;
-        height: auto;
-        position: fixed;
-        bottom: -200px;
-        top: auto;
-        right: 0;
-        left: 0;
-        box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
-        transition: bottom 0.4s ease;
-      }
-      #painel.ativo {
-        bottom: 0;
-      }
-      #mapa-container.deslocado {
-        margin-right: 0; /* em mobile não empurra */
-      }
-      #card {
-        max-width: 60%;
-        max-height: 150px;
-        margin-top: 0;
-      }
-      .navegacao {
-        gap: 10px;
-      }
-      #fechar {
-        top: 5px;
-        right: 5px;
-      }
-    }
+.navegacao button:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #555;
+}
+
+.navegacao button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#indicador {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Responsividade */
+@media (max-width: 800px) {
+  body {
+    flex-direction: column;
+    height: auto;
+  }
+  .mapa-wrapper {
+    flex-direction: column;
+    max-width: 100%;
+    height: auto;
+  }
+  #mapa-container {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+  #painel {
+    position: relative;
+    width: 100%;
+    right: 0;
+    top: auto;
+    height: auto;
+    flex-direction: column;
+    padding: 10px;
+    box-shadow: none;
+    transition: none;
+    margin-top: 10px;
+    display: none; /* escondido por padrão */
+  }
+  #painel.ativo {
+    display: flex; /* aparece abaixo do mapa */
+  }
+  #card {
+    max-width: 95%;
+    max-height: 300px;
+  }
+  .navegacao {
+    margin-top: 8px;
+  }
+}
   </style>
 </head>
 <body>
@@ -160,12 +187,12 @@ svg {
     </div>
 
     <div id="painel">
-      <span id="fechar">✖</span>
       <img id="card" src="" alt="Card da cidade">
+      <span id="fechar">✖</span>
       <div class="navegacao">
-        <button id="prev">⟵</button>
+        <button id="prev">‹</button>
         <span id="indicador">0 / 0</span>
-        <button id="next">⟶</button>
+        <button id="next">›</button>
       </div>
     </div>
   </div>
@@ -182,7 +209,6 @@ svg {
     let cidadeAtual = null;
     let indiceAtual = 1;
 
-    // Lista completa de cards
     const listaCards = [
       "salvador-1","belohorizonte-1","recife-1","recife-2","natal-1",
       "saocarlos-1","bauru-1","campinas-1","campinas-2","campinas-3",
@@ -195,7 +221,6 @@ svg {
       "voltaredonda-1","voltaredonda-2","florestal-1"
     ];
 
-    // Monta objeto {cidade: [cards]}
     const cardsPorCidade = {};
     listaCards.forEach(nome => {
       const cidade = nome.replace(/-\d+$/, "");
@@ -203,9 +228,15 @@ svg {
       cardsPorCidade[cidade].push(`cards/${nome}.jpg`);
     });
 
+    function atualizarBotoes() {
+      btnPrev.disabled = indiceAtual === 1;
+      btnNext.disabled = indiceAtual === cardsPorCidade[cidadeAtual].length;
+    }
+
     function carregarCard(cidade, indice) {
       cardImg.src = cardsPorCidade[cidade][indice - 1];
       indicador.textContent = `${indice} / ${cardsPorCidade[cidade].length}`;
+      atualizarBotoes();
     }
 
     btnPrev.addEventListener('click', () => {
