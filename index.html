@@ -15,13 +15,11 @@ body {
   background: transparent;
 }
 
+/* Wrapper do mapa */
 .mapa-wrapper {
   width: 100%;
-  max-width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  position: relative;
+  max-width: 100%; /* antes tinha limite em px */
+  margin: auto;
 }
 
 /* Área do mapa */
@@ -34,10 +32,11 @@ body {
   width: 70%; /* ocupa 70% da largura */
 }
 
+/* SVG do mapa */
 svg {
   width: 100%;
   height: auto;
-  max-width: 100%;
+  max-width: 100%; /* antes tinha 1200px */
 }
 
 /* Painel lateral */
