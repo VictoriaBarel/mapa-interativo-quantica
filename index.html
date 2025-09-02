@@ -17,10 +17,10 @@ body {
 
 .mapa-wrapper {
   width: 100%;
-  max-width: 1800px; /* antes 1200px → +50% */
+  max-width: 1440px; /* antes 1200px → +20% */
   height: 100%;
   display: flex;
-  align-items: center; /* mantém painel centralizado com mapa */
+  align-items: center;
   position: relative;
 }
 
@@ -30,30 +30,28 @@ body {
   justify-content: center;
   align-items: center;
   transition: margin-right 0.4s ease;
-  transform: scale(1.5); /* zoom de 50% */
-  transform-origin: center;
 }
 
 svg {
   width: 100%;
   height: auto;
-  max-width: 1500px; /* antes 1000px → +50% */
+  max-width: 1200px; /* antes 1000px → +20% */
 }
 
 /* Painel lateral */
 #painel {
-  width: 525px; /* antes 350px → +50% */
+  width: 420px; /* antes 350px → +20% */
   background: transparent;
   border-left: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* centraliza card + navegação */
+  justify-content: center;
   padding: 10px;
   box-sizing: border-box;
   position: absolute;
   top: 0;
-  right: -525px; /* acompanha o novo width */
+  right: -420px;
   height: 100%;
   transition: right 0.4s ease;
   z-index: 10;
@@ -64,7 +62,7 @@ svg {
 }
 
 #mapa-container.deslocado {
-  margin-right: 525px; /* acompanha o novo width */
+  margin-right: 420px;
 }
 
 /* Card centralizado */
@@ -76,15 +74,15 @@ svg {
 }
 
 #card {
-  max-width: 135%; /* antes 90% → +50% */
-  max-height: 135%; /* idem */
+  max-width: 110%; /* antes 90% → +20% */
+  max-height: 110%;
   object-fit: contain;
   margin: auto;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   background: transparent;
   opacity: 0;
-  transition: opacity 0.4s ease; /* fade in */
+  transition: opacity 0.4s ease;
 }
 
 #card.visivel {
@@ -124,7 +122,7 @@ svg {
 }
 
 .navegacao button {
-  width: 36px; /* levemente maior */
+  width: 36px;
   height: 36px;
   border-radius: 50%;
   border: 1px solid #aaa;
@@ -167,7 +165,6 @@ svg {
   #mapa-container {
     width: 100%;
     margin-right: 0 !important;
-    transform: scale(1); /* remove zoom no mobile */
   }
   #painel {
     position: relative;
@@ -252,12 +249,12 @@ svg {
     }
 
     function carregarCard(cidade, indice) {
-      cardImg.classList.remove('visivel'); // inicia fade
+      cardImg.classList.remove('visivel');
       setTimeout(() => {
         cardImg.src = cardsPorCidade[cidade][indice - 1];
         indicador.textContent = `${indice} / ${cardsPorCidade[cidade].length}`;
         atualizarBotoes();
-        cardImg.onload = () => cardImg.classList.add('visivel'); // aplica fade-in
+        cardImg.onload = () => cardImg.classList.add('visivel');
       }, 100);
     }
 
