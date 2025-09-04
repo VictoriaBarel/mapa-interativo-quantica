@@ -1,200 +1,167 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Mapa Interativo - Quântica</title>
   <style>
-body {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  background: transparent;
-}
+    /* Layout base */
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: transparent;
+    }
+    .mapa-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
 
-/* Wrapper do mapa */
-.mapa-wrapper {
-  width: 100%;
-  max-width: 100%; /* antes tinha limite em px */
-  margin: auto;
-}
+    /* Área do mapa */
+    #mapa-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: margin-right 0.4s ease;
+      width: 65%; /* sobra 35% pro painel quando aberto */
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      display: block;
+    }
 
-/* Área do mapa */
-#mapa-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: margin-right 0.4s ease;
-  width: 70%; /* ocupa 70% da largura */
-}
+    /* Painel lateral */
+    #painel {
+      width: 35%;               /* painel em % (maior pros cards) */
+      position: absolute;
+      right: -35%;              /* começa fora da tela */
+      top: 0;
+      height: 100%;
+      display: none;            /* some de verdade quando fechado */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-sizing: border-box;
+      background: transparent;  /* fundo transparente como vc pediu */
+      transition: right 0.4s ease;
+      z-index: 10;
+    }
+    #painel.ativo { display: flex; right: 0; }
+    #mapa-container.deslocado { margin-right: 35%; }
 
-/* SVG do mapa */
-svg {
-  width: 100%;
-  height: auto;
-  max-width: 100%; /* antes tinha 1200px */
-}
+    /* Card maior e centralizado */
+    .card-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #card {
+      max-width: 98%;     /* ocupa quase todo painel */
+      max-height: 86%;    /* fica grande na vertical também */
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      background: transparent;  /* transparente */
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    #card.visivel { opacity: 1; }
 
-/* Painel lateral */
-#painel {
-  width: 30%; /* em vez de px */
-  background: transparent;
-  display: none; /* escondido por padrão */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  box-sizing: border-box;
-  position: absolute;
-  top: 0;
-  right: -30%; /* fora da tela inicialmente */
-  height: 100%;
-  transition: right 0.4s ease;
-  z-index: 10;
-}
+    /* Botão fechar no canto do card */
+    #fechar {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.2s;
+    }
+    #fechar:hover { background: #fff; }
 
-#painel.ativo {
-  display: flex;
-  right: 0;
-}
+    /* Navegação abaixo do card */
+    .navegacao {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .navegacao button {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid #aaa;
+      background: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: 0.2s;
+    }
+    .navegacao button:hover:not(:disabled) {
+      background: #f0f0f0;
+      border-color: #555;
+    }
+    .navegacao button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    #indicador { font-size: 14px; color: #333; }
 
-#mapa-container.deslocado {
-  margin-right: 30%; /* acompanha a largura do painel */
-}
-
-/* Card */
-.card-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#card {
-  max-width: 95%;
-  max-height: 85%;
-  object-fit: contain;
-  margin: auto;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  background: transparent;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-#card.visivel {
-  opacity: 1;
-}
-
-/* Botão fechar */
-#fechar {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  cursor: pointer;
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  background: rgba(255,255,255,0.8);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  transition: 0.2s;
-}
-
-#fechar:hover {
-  background: rgba(255,255,255,1);
-}
-
-/* Navegação */
-.navegacao {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.navegacao button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid #aaa;
-  background-color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  transition: 0.2s;
-}
-
-.navegacao button:hover:not(:disabled) {
-  background-color: #f0f0f0;
-  border-color: #555;
-}
-
-.navegacao button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-#indicador {
-  font-size: 14px;
-  color: #333;
-}
-
-/* Responsividade */
-@media (max-width: 800px) {
-  body {
-    flex-direction: column;
-    height: auto;
-  }
-  .mapa-wrapper {
-    flex-direction: column;
-    max-width: 100%;
-    height: auto;
-  }
-  #mapa-container {
-    width: 100%;
-    margin-right: 0 !important;
-  }
-  #painel {
-    position: relative;
-    width: 100%;
-    right: 0;
-    top: auto;
-    height: auto;
-    flex-direction: column;
-    padding: 10px;
-    box-shadow: none;
-    transition: none;
-    margin-top: 10px;
-    display: none;
-  }
-  #painel.ativo {
-    display: flex;
-  }
-  #card {
-    max-width: 95%;
-    max-height: 300px;
-  }
-  .navegacao {
-    margin-top: 8px;
-  }
-}
+    /* Responsividade (mobile) */
+    @media (max-width: 800px) {
+      body { height: auto; }
+      .mapa-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+      }
+      #mapa-container {
+        width: 100%;
+        margin-right: 0 !important; /* não desloca o mapa no mobile */
+      }
+      #painel {
+        position: relative;
+        width: 100%;
+        right: 0;
+        top: auto;
+        height: auto;
+        display: none;
+        padding: 10px;
+        margin-top: 8px;
+      }
+      #painel.ativo { display: flex; }
+      #card {
+        max-width: 96%;
+        max-height: 320px; /* maior no mobile tbm */
+      }
+    }
   </style>
 </head>
 <body>
-
   <div class="mapa-wrapper">
     <div id="mapa-container">
       <object id="mapa" type="image/svg+xml" data="mapa.svg"></object>
@@ -202,7 +169,7 @@ svg {
 
     <div id="painel">
       <div class="card-wrapper">
-        <img id="card" src="" alt="Card da cidade">
+        <img id="card" src="" alt="Card da cidade" />
         <span id="fechar">✖</span>
       </div>
       <div class="navegacao">
@@ -214,6 +181,7 @@ svg {
   </div>
 
   <script>
+    // Elementos
     const painel = document.getElementById('painel');
     const mapaContainer = document.getElementById('mapa-container');
     const cardImg = document.getElementById('card');
@@ -222,9 +190,11 @@ svg {
     const btnNext = document.getElementById('next');
     const btnFechar = document.getElementById('fechar');
 
+    // Estado
     let cidadeAtual = null;
     let indiceAtual = 1;
 
+    // LISTA DE CARDS (ajuste conforme seus arquivos)
     const listaCards = [
       "salvador-1","belohorizonte-1","recife-1","recife-2","natal-1",
       "saocarlos-1","bauru-1","campinas-1","campinas-2","campinas-3",
@@ -237,67 +207,93 @@ svg {
       "voltaredonda-1","voltaredonda-2","florestal-1"
     ];
 
+    // Mapeia cada cidade para sua lista de imagens
     const cardsPorCidade = {};
     listaCards.forEach(nome => {
       const cidade = nome.replace(/-\d+$/, "");
-      if (!cardsPorCidade[cidade]) cardsPorCidade[cidade] = [];
-      cardsPorCidade[cidade].push(`cards/${nome}.jpg`);
+      (cardsPorCidade[cidade] ||= []).push(`cards/${nome}.jpg`);
     });
 
     function atualizarBotoes() {
-      btnPrev.disabled = indiceAtual === 1;
-      btnNext.disabled = indiceAtual === cardsPorCidade[cidadeAtual].length;
+      const total = cardsPorCidade[cidadeAtual]?.length || 0;
+      btnPrev.disabled = indiceAtual <= 1;
+      btnNext.disabled = indiceAtual >= total;
+      indicador.textContent = total ? `${indiceAtual} / ${total}` : "0 / 0";
     }
 
     function carregarCard(cidade, indice) {
-      cardImg.classList.remove('visivel');
+      const lista = cardsPorCidade[cidade];
+      if (!lista || !lista[indice - 1]) return;
+
+      cardImg.classList.remove('visivel'); // prepara fade-in
+      // pequeno delay pra suavizar a troca
       setTimeout(() => {
-        cardImg.src = cardsPorCidade[cidade][indice - 1];
-        indicador.textContent = `${indice} / ${cardsPorCidade[cidade].length}`;
-        atualizarBotoes();
+        cardImg.src = lista[indice - 1];
         cardImg.onload = () => cardImg.classList.add('visivel');
-      }, 100);
+        atualizarBotoes();
+      }, 80);
     }
 
+    // Navegação
     btnPrev.addEventListener('click', () => {
       if (indiceAtual > 1) {
         indiceAtual--;
         carregarCard(cidadeAtual, indiceAtual);
       }
     });
-
     btnNext.addEventListener('click', () => {
-      if (indiceAtual < cardsPorCidade[cidadeAtual].length) {
+      if (indiceAtual < (cardsPorCidade[cidadeAtual]?.length || 0)) {
         indiceAtual++;
         carregarCard(cidadeAtual, indiceAtual);
       }
     });
 
+    // Fechar painel
     btnFechar.addEventListener('click', () => {
       painel.classList.remove('ativo');
       mapaContainer.classList.remove('deslocado');
-      setTimeout(() => {
-        painel.style.display = "none"; // fecha de verdade
-      }, 400);
+      // espera animação terminar e some de verdade
+      setTimeout(() => { painel.style.display = 'none'; }, 400);
     });
 
-    document.getElementById('mapa').addEventListener('load', function() {
+    // Liga os cliques no SVG
+    document.getElementById('mapa').addEventListener('load', function () {
       const svgDoc = this.contentDocument;
-      const cidadesSVG = svgDoc.querySelectorAll('[id]');
+      if (!svgDoc) return;
 
-      cidadesSVG.forEach(cidade => {
-        if (cardsPorCidade[cidade.id]) {
-          cidade.style.cursor = 'pointer';
-          cidade.addEventListener('click', () => {
-            painel.style.display = "flex"; // reexibe
-            cidadeAtual = cidade.id;
+      const elementos = svgDoc.querySelectorAll('[id]');
+      elementos.forEach(el => {
+        const id = el.id;
+        if (cardsPorCidade[id]) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', () => {
+            cidadeAtual = id;
             indiceAtual = 1;
             carregarCard(cidadeAtual, indiceAtual);
+
+            // mostra painel e desloca mapa (desktop)
+            painel.style.display = 'flex';
             painel.classList.add('ativo');
-            mapaContainer.classList.add('deslocado');
+
+            // só desloca no desktop (quando o painel é lateral)
+            if (window.matchMedia('(min-width: 801px)').matches) {
+              mapaContainer.classList.add('deslocado');
+            } else {
+              mapaContainer.classList.remove('deslocado');
+            }
           });
         }
       });
+    });
+
+    // Garante comportamento correto ao redimensionar
+    window.addEventListener('resize', () => {
+      if (!painel.classList.contains('ativo')) return;
+      if (window.matchMedia('(min-width: 801px)').matches) {
+        mapaContainer.classList.add('deslocado');
+      } else {
+        mapaContainer.classList.remove('deslocado');
+      }
     });
   </script>
 </body>
