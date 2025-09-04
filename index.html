@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Mapa Interativo - Quântica</title>
   <style>
-    /* Layout base */
     body {
       margin: 0;
       height: 100vh;
@@ -30,7 +29,7 @@
       justify-content: center;
       align-items: center;
       transition: margin-right 0.4s ease;
-      width: 65%; /* sobra 35% pro painel quando aberto */
+      width: 60%; /* agora o mapa fica com 60% da tela */
     }
     svg {
       width: 100%;
@@ -41,25 +40,25 @@
 
     /* Painel lateral */
     #painel {
-      width: 35%;               /* painel em % (maior pros cards) */
+      width: 40%;               /* antes 35% */
       position: absolute;
-      right: -35%;              /* começa fora da tela */
+      right: -40%;              /* acompanha a largura */
       top: 0;
       height: 100%;
-      display: none;            /* some de verdade quando fechado */
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 10px;
       box-sizing: border-box;
-      background: transparent;  /* fundo transparente como vc pediu */
+      background: transparent;
       transition: right 0.4s ease;
       z-index: 10;
     }
     #painel.ativo { display: flex; right: 0; }
-    #mapa-container.deslocado { margin-right: 35%; }
+    #mapa-container.deslocado { margin-right: 40%; } /* acompanha */
 
-    /* Card maior e centralizado */
+    /* Card */
     .card-wrapper {
       position: relative;
       width: 100%;
@@ -68,18 +67,18 @@
       align-items: center;
     }
     #card {
-      max-width: 98%;     /* ocupa quase todo painel */
-      max-height: 86%;    /* fica grande na vertical também */
+      max-width: 100%;   /* ocupa quase todo painel */
+      max-height: 92%;
       object-fit: contain;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      background: transparent;  /* transparente */
+      background: transparent;
       opacity: 0;
       transition: opacity 0.35s ease;
     }
     #card.visivel { opacity: 1; }
 
-    /* Botão fechar no canto do card */
+    /* Botão fechar */
     #fechar {
       position: absolute;
       top: 8px;
@@ -100,7 +99,7 @@
     }
     #fechar:hover { background: #fff; }
 
-    /* Navegação abaixo do card */
+    /* Navegação */
     .navegacao {
       display: flex;
       align-items: center;
@@ -131,7 +130,7 @@
     }
     #indicador { font-size: 14px; color: #333; }
 
-    /* Responsividade (mobile) */
+    /* Responsividade */
     @media (max-width: 800px) {
       body { height: auto; }
       .mapa-wrapper {
@@ -141,7 +140,7 @@
       }
       #mapa-container {
         width: 100%;
-        margin-right: 0 !important; /* não desloca o mapa no mobile */
+        margin-right: 0 !important;
       }
       #painel {
         position: relative;
@@ -156,7 +155,7 @@
       #painel.ativo { display: flex; }
       #card {
         max-width: 96%;
-        max-height: 320px; /* maior no mobile tbm */
+        max-height: 320px;
       }
     }
   </style>
@@ -181,7 +180,6 @@
   </div>
 
   <script>
-    // Elementos
     const painel = document.getElementById('painel');
     const mapaContainer = document.getElementById('mapa-container');
     const cardImg = document.getElementById('card');
@@ -190,11 +188,9 @@
     const btnNext = document.getElementById('next');
     const btnFechar = document.getElementById('fechar');
 
-    // Estado
     let cidadeAtual = null;
     let indiceAtual = 1;
 
-    // LISTA DE CARDS (ajuste conforme seus arquivos)
     const listaCards = [
       "salvador-1","belohorizonte-1","recife-1","recife-2","natal-1",
       "saocarlos-1","bauru-1","campinas-1","campinas-2","campinas-3",
@@ -207,7 +203,6 @@
       "voltaredonda-1","voltaredonda-2","florestal-1"
     ];
 
-    // Mapeia cada cidade para sua lista de imagens
     const cardsPorCidade = {};
     listaCards.forEach(nome => {
       const cidade = nome.replace(/-\d+$/, "");
@@ -224,9 +219,7 @@
     function carregarCard(cidade, indice) {
       const lista = cardsPorCidade[cidade];
       if (!lista || !lista[indice - 1]) return;
-
-      cardImg.classList.remove('visivel'); // prepara fade-in
-      // pequeno delay pra suavizar a troca
+      cardImg.classList.remove('visivel');
       setTimeout(() => {
         cardImg.src = lista[indice - 1];
         cardImg.onload = () => cardImg.classList.add('visivel');
@@ -234,7 +227,6 @@
       }, 80);
     }
 
-    // Navegação
     btnPrev.addEventListener('click', () => {
       if (indiceAtual > 1) {
         indiceAtual--;
@@ -248,19 +240,15 @@
       }
     });
 
-    // Fechar painel
     btnFechar.addEventListener('click', () => {
       painel.classList.remove('ativo');
       mapaContainer.classList.remove('deslocado');
-      // espera animação terminar e some de verdade
       setTimeout(() => { painel.style.display = 'none'; }, 400);
     });
 
-    // Liga os cliques no SVG
     document.getElementById('mapa').addEventListener('load', function () {
       const svgDoc = this.contentDocument;
       if (!svgDoc) return;
-
       const elementos = svgDoc.querySelectorAll('[id]');
       elementos.forEach(el => {
         const id = el.id;
@@ -270,12 +258,8 @@
             cidadeAtual = id;
             indiceAtual = 1;
             carregarCard(cidadeAtual, indiceAtual);
-
-            // mostra painel e desloca mapa (desktop)
             painel.style.display = 'flex';
             painel.classList.add('ativo');
-
-            // só desloca no desktop (quando o painel é lateral)
             if (window.matchMedia('(min-width: 801px)').matches) {
               mapaContainer.classList.add('deslocado');
             } else {
@@ -286,7 +270,6 @@
       });
     });
 
-    // Garante comportamento correto ao redimensionar
     window.addEventListener('resize', () => {
       if (!painel.classList.contains('ativo')) return;
       if (window.matchMedia('(min-width: 801px)').matches) {
